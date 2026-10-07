@@ -1,0 +1,14 @@
+{
+  "rows": 8807,
+  "dup_show_id": 0,
+  "rating_nunique": 14,
+  "rating_null": 0,
+  "duration_null": 0,
+  "date_added_null": 10,
+  "text_cells_with_stray_whitespace": 0,
+  "country_distinct_clean": 123,
+  "listed_in_distinct_clean": 42,
+  "country_empty_items": 0,
+  "country_unknown_titles": 831,
+  "indonesia_titles": 90
+}
