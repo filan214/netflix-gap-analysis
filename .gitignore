@@ -2,3 +2,5 @@ data/
 .venv/
 .ipynb_checkpoints/
 __pycache__/
+.env
+.pytest_cache/
