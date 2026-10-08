@@ -57,7 +57,7 @@ The two sources share no ID, so titles are matched on normalized name + year + t
    - `scripts/03_audit.py summary` prints precision per tier from human answers only. `summary --use-ai-for-blank` lets blank `correct` rows count as their `ai_label`. It shows how many labels are human and how many are AI, and leaves `unsure` rows out of precision, counted separately.
    - A tier counts in the analysis only with precision >= 90%. The precision reported in `docs/match_report.md` states how many of its labels were human-checked.
 
-Current result: 7,492 of 8,807 titles matched (85.1%). Movies 85.1%, TV shows 84.9%. Titles with no country listed match far less often (55.2%).
+Current result: 7,492 of 8,807 titles matched (85.1%). Movies 85.1%, TV shows 84.9%. Titles with no country listed match far less often (55.2%). Audit precision is 100.0% for `exact` (30/30) and 96.7% for `year_pm1` (29/30), with 12 of the 60 labels human-checked, so both tiers are accepted.
 
 ## Setup
 
@@ -95,7 +95,7 @@ Requires Python 3.13 and PostgreSQL 14+ (built on 18) with the `pg_trgm` extensi
    ```powershell
    python scripts/03_run_match.py
    ```
-9. Export the audit sample, list the rows to check by hand, fill `correct` with `y` or `n` in `docs/match_audit_sample.csv`, then print precision per tier:
+9. Export the audit sample, list the rows to check by hand, fill `correct` with `y` or `n` in `docs/match_audit_sample.csv`, then print precision per tier and record it in `docs/match_report.md` (re-running the matcher keeps that section):
    ```powershell
    python scripts/03_audit.py export
    ```
@@ -103,6 +103,6 @@ Requires Python 3.13 and PostgreSQL 14+ (built on 18) with the `pg_trgm` extensi
    python scripts/03_audit.py review
    ```
    ```powershell
-   python scripts/03_audit.py summary --use-ai-for-blank
+   python scripts/03_audit.py summary --use-ai-for-blank --record
    ```
    A fresh export has empty `ai_label` / `ai_evidence` columns. AI labels are added in a Claude Code session, and a re-export keeps them.

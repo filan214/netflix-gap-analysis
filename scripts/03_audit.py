@@ -4,11 +4,13 @@
     python scripts/03_audit.py review                       # rows to check by hand first
     python scripts/03_audit.py summary                      # precision from human answers only
     python scripts/03_audit.py summary --use-ai-for-blank   # blank `correct` falls back to ai_label
+    python scripts/03_audit.py summary --use-ai-for-blank --record   # also save to docs/match_report.md
 
 export samples up to 30 matches per built tier with a fixed seed and refuses to
 overwrite a file that already has answers in `correct` (pass --force to do it anyway).
 Existing ai_label / ai_evidence values are carried over by (show_id, tconst).
-review and summary only read the file; they change nothing in the database or on disk.
+review and summary only read the file; they change nothing in the database or on disk,
+except `summary --record`, which writes the result into docs/match_report.md.
 
 `correct` is the human answer (y or n). `ai_label` (y / n / unsure) and `ai_evidence`
 are an AI pre-check that only guides which rows to check by hand first.
@@ -16,10 +18,13 @@ are an AI pre-check that only guides which rows to check by hand first.
 import argparse
 import csv
 import random
+import re
 import sys
 from pathlib import Path
 
 AUDIT = Path("docs/match_audit_sample.csv")
+REPORT = Path("docs/match_report.md")
+AUDIT_HEADING = "## Audit precision"
 TIERS = ["exact", "year_pm1"]   # tiers built so far; T3 fuzzy is not built
 PER_TIER = 30
 SEED = 42
@@ -97,41 +102,94 @@ def load_or_exit():
     return read_audit()
 
 
-def summary(use_ai_for_blank):
-    rows = load_or_exit()
-    mode = "human answers, blank -> ai_label" if use_ai_for_blank else "human answers only"
-    print(f"=== Audit precision per tier ({AUDIT}; {mode}) ===")
-    print(f"{'tier':<10}{'sampled':>8}{'human y/n':>11}{'AI y/n':>8}{'unsure':>8}{'blank':>7}{'other':>7}  precision")
-    totals = {"human": 0, "ai": 0}
+def tier_stats(rows, use_ai_for_blank):
+    stats = []
     for tier in TIERS:
         tier_rows = [r for r in rows if r["tier"] == tier]
-        y = n = h_used = a_used = unsure = blank = other = 0
+        s = dict(tier=tier, sampled=len(tier_rows), y=0, n=0, human=0, ai=0, unsure=0, blank=0, other=0)
         for r in tier_rows:
             label, source = human(r), "human"
             if not label and use_ai_for_blank:
                 label, source = ai(r), "ai"
             if label in ("y", "n"):
-                y += label == "y"
-                n += label == "n"
-                h_used += source == "human"
-                a_used += source == "ai"
+                s[label] += 1
+                s[source] += 1
             elif label == "unsure":
-                unsure += 1
+                s["unsure"] += 1
             elif label == "":
-                blank += 1
+                s["blank"] += 1
             else:
-                other += 1
-        totals["human"] += h_used
-        totals["ai"] += a_used
-        if y + n:
-            p = y / (y + n)
-            verdict = "meets 90%" if p >= PRECISION_BAR else "BELOW 90% -> drop from accepted_tiers"
-            prec = f"{p:.1%} = {y}/{y + n} ({verdict})"
-        else:
-            prec = "n/a (no answers yet)"
-        print(f"{tier:<10}{len(tier_rows):>8}{h_used:>11}{a_used:>8}{unsure:>8}{blank:>7}{other:>7}  {prec}")
-    print(f"Labels used: {totals['human']} human, {totals['ai']} AI.")
-    print("Precision = y / (y + n); unsure, blank and other values are left out. Nothing was changed.")
+                s["other"] += 1
+        checked = s["y"] + s["n"]
+        s["precision"] = s["y"] / checked if checked else None
+        stats.append(s)
+    return stats
+
+
+def precision_text(s):
+    if s["precision"] is None:
+        return "n/a (no answers yet)"
+    verdict = "meets 90%" if s["precision"] >= PRECISION_BAR else "BELOW 90% -> drop from accepted_tiers"
+    return f"{s['precision']:.1%} = {s['y']}/{s['y'] + s['n']} ({verdict})"
+
+
+def ai_agreement(rows):
+    both = [r for r in rows if human(r) in ("y", "n") and ai(r) in ("y", "n")]
+    agree = sum(human(r) == ai(r) for r in both)
+    resolved = [r for r in rows if human(r) in ("y", "n") and ai(r) == "unsure"]
+    return agree, len(both), resolved
+
+
+def record(stats, rows, use_ai_for_blank):
+    from datetime import date
+
+    if not REPORT.exists():
+        sys.exit(f"{REPORT} not found. Run: python scripts/03_run_match.py")
+    agree, n_both, resolved = ai_agreement(rows)
+    mode = "blank `correct` rows count as their `ai_label`" if use_ai_for_blank else "human answers only"
+    body = "\n".join(
+        f"| {s['tier']} | {s['sampled']} | {s['human']} | {s['ai']} | {s['unsure']} | {s['blank']} | {precision_text(s)} |"
+        for s in stats)
+    unsure_txt = ", ".join(f"{r['show_id']} -> {human(r)}" for r in resolved) or "none"
+    section = f"""{AUDIT_HEADING}
+
+Recorded {date.today().isoformat()} by `python scripts/03_audit.py summary{' --use-ai-for-blank' if use_ai_for_blank else ''} --record`.
+Sample: up to {PER_TIER} matches per tier, seed {SEED}. Mode: {mode}. Precision = y / (y + n); `unsure` and blank rows are left out.
+
+| tier | sampled | human-labelled | AI-labelled | unsure | blank | precision |
+|---|---|---|---|---|---|---|
+{body}
+
+AI-assisted audit (PRD section 10): the human checked every AI `n` / `unsure` row and 10 random AI `y` rows.
+- AI label vs human answer, where both are y/n: {agree}/{n_both} agree.
+- AI `unsure` rows resolved by the human: {unsure_txt}.
+"""
+    text = REPORT.read_text(encoding="utf-8")
+    text = re.sub(rf"\n{re.escape(AUDIT_HEADING)}\n.*?(?=\n## |\Z)", "", text, flags=re.S)
+    text = re.sub(r"^Audit precision per tier:.*$", "Audit precision per tier: see the Audit precision section.",
+                  text, count=1, flags=re.M)
+    text = text.replace("\n## Tiers, overall", f"\n{section}\n## Tiers, overall", 1)
+    REPORT.write_text(text, encoding="utf-8")
+    print(f"Recorded audit precision in {REPORT}")
+
+
+def summary(use_ai_for_blank, record_it):
+    rows = load_or_exit()
+    stats = tier_stats(rows, use_ai_for_blank)
+    mode = "human answers, blank -> ai_label" if use_ai_for_blank else "human answers only"
+    print(f"=== Audit precision per tier ({AUDIT}; {mode}) ===")
+    print(f"{'tier':<10}{'sampled':>8}{'human y/n':>11}{'AI y/n':>8}{'unsure':>8}{'blank':>7}{'other':>7}  precision")
+    for s in stats:
+        print(f"{s['tier']:<10}{s['sampled']:>8}{s['human']:>11}{s['ai']:>8}{s['unsure']:>8}"
+              f"{s['blank']:>7}{s['other']:>7}  {precision_text(s)}")
+    print(f"Labels used: {sum(s['human'] for s in stats)} human, {sum(s['ai'] for s in stats)} AI.")
+    agree, n_both, resolved = ai_agreement(rows)
+    print(f"AI vs human where both are y/n: {agree}/{n_both} agree; AI unsure resolved by human: {len(resolved)}.")
+    print("Precision = y / (y + n); unsure, blank and other values are left out.")
+    if record_it:
+        record(stats, rows, use_ai_for_blank)
+    else:
+        print("Nothing was changed.")
 
 
 def review():
@@ -165,6 +223,8 @@ def main():
     parser.add_argument("--force", action="store_true", help="export: overwrite a file that has answers")
     parser.add_argument("--use-ai-for-blank", action="store_true",
                         help="summary: count blank `correct` rows as their ai_label")
+    parser.add_argument("--record", action="store_true",
+                        help="summary: write the result into the Audit precision section of docs/match_report.md")
     args = parser.parse_args()
     sys.stdout.reconfigure(encoding="utf-8")
     if args.mode == "export":
@@ -172,7 +232,7 @@ def main():
     elif args.mode == "review":
         review()
     else:
-        summary(args.use_ai_for_blank)
+        summary(args.use_ai_for_blank, args.record)
 
 
 if __name__ == "__main__":

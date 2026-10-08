@@ -2,7 +2,7 @@
 
 Generated 2026-10-08 by `scripts/03_run_match.py` from `sql/03_match.sql`.
 Tiers built: T1 `exact`, T2 `year_pm1`. T3 `fuzzy` is not built. Rules: PRD section 6.
-Audit precision per tier: pending (fill `docs/match_audit_sample.csv`, then run `python scripts/03_audit.py summary`).
+Audit precision per tier: see the Audit precision section.
 
 ## Checks
 
@@ -13,6 +13,20 @@ Audit precision per tier: pending (fill `docs/match_audit_sample.csv`, then run 
 - [PASS] no match made on an empty title_norm (got 0)
 - [PASS] every match satisfies name + type + year rule of its tier (violations: 0)
 - [PASS] no fuzzy tier rows (T3 not built)
+
+## Audit precision
+
+Recorded 2026-10-08 by `python scripts/03_audit.py summary --use-ai-for-blank --record`.
+Sample: up to 30 matches per tier, seed 42. Mode: blank `correct` rows count as their `ai_label`. Precision = y / (y + n); `unsure` and blank rows are left out.
+
+| tier | sampled | human-labelled | AI-labelled | unsure | blank | precision |
+|---|---|---|---|---|---|---|
+| exact | 30 | 7 | 23 | 0 | 0 | 100.0% = 30/30 (meets 90%) |
+| year_pm1 | 30 | 5 | 25 | 0 | 0 | 96.7% = 29/30 (meets 90%) |
+
+AI-assisted audit (PRD section 10): the human checked every AI `n` / `unsure` row and 10 random AI `y` rows.
+- AI label vs human answer, where both are y/n: 10/10 agree.
+- AI `unsure` rows resolved by the human: s630 -> n, s4041 -> y.
 
 ## Tiers, overall (8,807 Netflix titles)
 

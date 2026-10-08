@@ -1,6 +1,6 @@
 # PRD — Netflix Catalog Gap Analysis (Global + Indonesia)
 
-> Scope and rationale. `IMPLEMENTATION_GUIDE.md` is the *how*. Phases 0-2 are done. Phases 3-4 are built with Claude Code. Phase 5 (Power BI) and Phase 6 (memo) are done by hand.
+> Scope and rationale. `IMPLEMENTATION_GUIDE.md` is the *how*. Phases 0-3 are done. Phase 4 is built with Claude Code. Phase 5 (Power BI) and Phase 6 (memo) are done by hand.
 
 ## 1. Purpose
 Data Analyst portfolio project. It shows: messy-data cleaning, SQL modeling, a join without a shared key, metrics defined up front with stated limits, a dashboard, and a recommendation memo. Secondary fit: general IT / data-engineering basics.
@@ -15,7 +15,7 @@ Where does Netflix's catalog deliver audience-rated quality, where is it thin co
 | 0 | Setup, raw profiling | Done | Manual |
 | 1 | Clean Netflix, build bridge tables | Done | Manual |
 | 2 | Model in PostgreSQL, load both sources | Done | Claude Code |
-| 3 | Match Netflix to IMDb, audit the match | In progress (manual audit pending) | Claude Code + manual audit |
+| 3 | Match Netflix to IMDb, audit the match | Done (T1 + T2; T3 not built) | Claude Code + manual audit |
 | 4 | Analysis marts in SQL | | Claude Code |
 | 5 | Power BI dashboard (3 pages) | | Manual |
 | 6 | 1-page findings memo | | Manual |
@@ -93,3 +93,4 @@ No shared ID exists, so titles are matched by normalized name + year + type, in 
 | 2026-10-08 | Phase 3 spec check, no rule changed. TV shows match about as well as movies (84.9% vs 85.1%), so the TV year rule does not under-match. Titles with no country match at 55.2%, against 82-92% for the 10 biggest countries. 6 of the 7 IMDb titles claimed by two Netflix titles are Netflix duplicates (the same film under 2 `show_id`s) | All three are reported in `docs/match_report.md`. The Unknown-country gap falls under limitation 3 in section 7. The duplicates come from the Phase 1 data and are left as they are |
 | 2026-10-08 | Match report also shows match rate by `year_added` and an unmatched near-miss count (same name and type in IMDb, year outside the T2 window) | Extra diagnostics for the T3 decision. Neither changes a rule |
 | 2026-10-08 | Phase 3 audit is AI-assisted with a human-checked subset. Claude pre-labels all 60 sampled matches (`ai_label` y / n / unsure + `ai_evidence`) from runtime agreement, genre overlap and model knowledge; IMDb pages returned HTTP 403, so no director/cast check. The human checks every `n` / `unsure` row plus 10 random `y` rows, and answers go in `correct`. Precision may count blank `correct` rows as their AI label (`summary --use-ai-for-blank`), with human vs AI label counts reported and `unsure` rows excluded | Cuts the manual pass while keeping a human check where the AI is unsure and a spot-check of its `y` labels. Section 6 says matches are "checked by hand"; this replaces a full hand check of all 60 rows. AI pre-labels (before human review): exact 30 y; year_pm1 28 y, 2 unsure, 0 n |
+| 2026-10-08 | Phase 3 audit result: `exact` 100.0% (30/30; 7 human, 23 AI labels), `year_pm1` 96.7% (29/30; 5 human, 25 AI). Both tiers stay in `mart.params.accepted_tiers` (`{exact,year_pm1}`), no change. The AI agreed with the human on 10/10 spot-checked `y` rows; its 2 `unsure` rows resolved to 1 y, 1 n | Recorded in `docs/match_report.md`. A known `exact` false positive outside the sample (s3857 *What If?* -> tt8860450) shows that precision is below 100% in practice |

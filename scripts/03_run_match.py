@@ -7,6 +7,7 @@ Run from the repo root:
     python scripts/03_run_match.py
 """
 import random
+import re
 import sys
 from datetime import date
 from pathlib import Path
@@ -15,6 +16,7 @@ from lib.db import connect
 
 SQL_FILE = Path("sql/03_match.sql")
 REPORT = Path("docs/match_report.md")
+AUDIT_HEADING = "## Audit precision"   # section written by 03_audit.py summary --record
 TIERS = ["exact", "year_pm1", "unmatched"]
 SEED = 42
 N_UNMATCHED_SAMPLE = 30
@@ -196,6 +198,14 @@ def checks(cur, total, tier_rows):
     return result
 
 
+def previous_audit_section():
+    # Keep a recorded audit result across re-runs: matching is deterministic, so the audited sample stays valid.
+    if not REPORT.exists():
+        return ""
+    m = re.search(rf"\n({re.escape(AUDIT_HEADING)}\n.*?)(?=\n## |\Z)", REPORT.read_text(encoding="utf-8"), re.S)
+    return "\n" + m.group(1).rstrip() + "\n" if m else ""
+
+
 def main():
     with connect() as conn, conn.cursor() as cur:
         cur.execute(SQL_FILE.read_text(encoding="utf-8"))
@@ -212,16 +222,20 @@ def main():
         check_rows = checks(cur, total, tier_rows)
 
     check_md = "\n".join(f"- [{'PASS' if ok else 'FAIL'}] {label}" for label, ok in check_rows)
+    audit_md = previous_audit_section()
+    audit_line = ("see the Audit precision section." if audit_md else
+                  "pending (fill `docs/match_audit_sample.csv`, then run "
+                  "`python scripts/03_audit.py summary --use-ai-for-blank --record`).")
     report = f"""# Match report — Netflix to IMDb
 
 Generated {date.today().isoformat()} by `scripts/03_run_match.py` from `sql/03_match.sql`.
 Tiers built: T1 `exact`, T2 `year_pm1`. T3 `fuzzy` is not built. Rules: PRD section 6.
-Audit precision per tier: pending (fill `docs/match_audit_sample.csv`, then run `python scripts/03_audit.py summary`).
+Audit precision per tier: {audit_line}
 
 ## Checks
 
 {check_md}
-
+{audit_md}
 ## Tiers, overall ({total:,} Netflix titles)
 
 {tier_md}
