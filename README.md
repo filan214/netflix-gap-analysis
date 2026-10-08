@@ -48,8 +48,14 @@ The two sources share no ID, so titles are matched on normalized name + year + t
 4. **Never drop titles.** Every Netflix title gets exactly one row in `netflix.title_match`. Titles that match nothing get an `unmatched` row.
 5. **Report and audit.**
    - `docs/match_report.md` gives the match rate by tier, type, country (including Indonesia and Unknown) and year added. It also lists IMDb titles claimed by more than one Netflix title, ambiguous matches, near misses, and a random sample of unmatched titles.
-   - `scripts/03_audit.py export` draws a reproducible sample of 30 matches per tier for checking by hand. `scripts/03_audit.py summary` prints precision per tier from the filled file.
-   - A tier counts in the analysis only with precision >= 90%.
+   - `scripts/03_audit.py export` draws a reproducible sample of 30 matches per tier (seed 42). It writes them to `docs/match_audit_sample.csv` (gitignored, title-level IMDb data) with Netflix and IMDb context: director, description, genres, duration and runtime.
+   - **The audit is AI-assisted, with a human-checked subset.**
+     - Claude pre-labels every row in `ai_label` (y / n / unsure), with a one-line reason in `ai_evidence`. The evidence comes from movie runtime agreement (within 10% or 10 minutes), Netflix vs IMDb genre overlap, and the model's own knowledge of the title.
+     - IMDb pages could not be fetched (HTTP 403), so director and cast were not compared. Thin evidence is labelled `unsure`, never `y`.
+     - The human answer goes in `correct`. AI labels never write to it.
+   - `scripts/03_audit.py review` prints the rows to check by hand: every `n` / `unsure` row, plus 10 random `y` rows (seed 42) as a spot-check of the AI.
+   - `scripts/03_audit.py summary` prints precision per tier from human answers only. `summary --use-ai-for-blank` lets blank `correct` rows count as their `ai_label`. It shows how many labels are human and how many are AI, and leaves `unsure` rows out of precision, counted separately.
+   - A tier counts in the analysis only with precision >= 90%. The precision reported in `docs/match_report.md` states how many of its labels were human-checked.
 
 Current result: 7,492 of 8,807 titles matched (85.1%). Movies 85.1%, TV shows 84.9%. Titles with no country listed match far less often (55.2%).
 
@@ -89,10 +95,14 @@ Requires Python 3.13 and PostgreSQL 14+ (built on 18) with the `pg_trgm` extensi
    ```powershell
    python scripts/03_run_match.py
    ```
-9. Export the audit sample, fill `correct` with `y` or `n` in `docs/match_audit_sample.csv`, then print precision per tier:
+9. Export the audit sample, list the rows to check by hand, fill `correct` with `y` or `n` in `docs/match_audit_sample.csv`, then print precision per tier:
    ```powershell
    python scripts/03_audit.py export
    ```
    ```powershell
-   python scripts/03_audit.py summary
+   python scripts/03_audit.py review
    ```
+   ```powershell
+   python scripts/03_audit.py summary --use-ai-for-blank
+   ```
+   A fresh export has empty `ai_label` / `ai_evidence` columns. AI labels are added in a Claude Code session, and a re-export keeps them.
