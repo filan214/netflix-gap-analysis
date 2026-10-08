@@ -17,10 +17,10 @@ data/clean/imdb_filtered.csv ─────────► scripts/02_load_post
 
 netflix.titles + imdb.title_names ─► sql/03_match*.sql ─► netflix.title_match
 netflix.* + imdb.* + title_match  ─► sql/04_*.sql      ─► schema mart (analysis tables)
-mart.*                            ─► scripts/04_export_marts.py ─► dashboard/data/*.csv ─► Power BI (Phase 5)
+mart.*                            ─► scripts/04_build_marts.py ─► dashboard/data/*.csv ─► Power BI (Phase 5)
 ```
 
-- Local PostgreSQL (16 or 17; `string_to_table` needs 14+). Extension `pg_trgm` for tier T3.
+- Local PostgreSQL (16 or 17; `string_to_table` needs 14+). Extension `pg_trgm` only matters if tier T3 gets built.
 - Three schemas: `netflix` (cleaned source), `imdb` (filtered source), `mart` (analysis outputs).
 - Python only loads data and runs SQL files. The matching and analysis logic lives in SQL.
 
@@ -36,16 +36,16 @@ netflix-gap-analysis/
     01_filter_imdb.py
     lib/normalize.py   +
     02_load_postgres.py   +
-    03_run_match.py  03_audit_export.py  03_audit_summary.py   +
-    04_run_marts.py  04_export_marts.py   +
+    03_run_match.py  03_audit.py   +
+    04_build_marts.py   +
   sql/
     01_schema.sql  02_indexes.sql   +
     03_match.sql   +
-    04_params.sql  04_marts.sql  04_sensitivity.sql   +
+    04_marts.sql  04_sensitivity.sql   +
   tests/test_normalize.py   +
   dashboard/data/             # aggregate mart CSVs only   +
   docs/  profile_before.json  profile_after.json  imdb_download_date.txt
-         match_audit_sample.csv  phase4_results.md   +
+         match_report.md  match_audit_sample.csv   +
 ```
 
 ## 2. Environment
@@ -123,7 +123,9 @@ mart.params (single row)
 
 **Done when:** the P2 checks in section 7 pass, and a second run of the loader gives identical counts.
 
-## 5. Phase 3 — Match Netflix to IMDb (1-1.5 days + 30-40 min manual audit)
+## 5. Phase 3 — Match Netflix to IMDb (about 1 day + 20-30 min manual audit)
+
+**Build T1 and T2 first, print the report, and stop.** T3 is conditional (see below).
 
 **Algorithm** (`sql/03_match.sql`, driven by `scripts/03_run_match.py`). Seed `title_match` empty, then fill tier by tier; each tier only considers Netflix titles not yet matched. For each tier, build candidates, rank them, keep rank 1:
 
@@ -146,45 +148,40 @@ Year rules:
 | Movie | `i.start_year = n.release_year` | `abs(i.start_year - n.release_year) <= 1` |
 | TV Show | `n.release_year BETWEEN i.start_year AND COALESCE(i.end_year, 9999)` | `n.release_year BETWEEN i.start_year - 1 AND COALESCE(i.end_year, 9999) + 1` |
 
-T3 `fuzzy`: `n.title_norm % nm.name_norm` with `SET pg_trgm.similarity_threshold = 0.85`, `length(n.title_norm) >= 5`, T2 year rule, rank by similarity then votes. Store `similarity`.
+After T2, insert an `unmatched` row (tconst NULL, candidate_count 0) for every remaining Netflix title, so `title_match` has exactly one row per title.
 
-Finish by inserting an `unmatched` row (tconst NULL, candidate_count 0) for every remaining Netflix title, so `title_match` has exactly one row per title.
+**T3 `fuzzy` — conditional, do not build unless asked.** Build it only if the match rate after T1+T2 is below 85% and the unmatched sample (below) shows near-misses. If built: `n.title_norm % nm.name_norm`, `pg_trgm.similarity_threshold = 0.85`, `length(n.title_norm) >= 5`, T2 year rule, rank by similarity then votes, store `similarity`, add the GIN trigram index. If skipped, say so in the README Method section.
 
 **Match report** printed by `03_run_match.py` and saved to `docs/match_report.md`:
-- Counts and percentages per tier, overall, and by `type`.
-- Match rate for the 10 biggest countries, Indonesia, and `Unknown`, and by `year_added`. This is the bias check: where do unmatched titles concentrate?
-- Number of `tconst` matched by more than one Netflix title (a possible error signal), and number of `ambiguous` matches.
+- Counts and percentages per tier, overall and by `type`.
+- Match rate for the 10 biggest countries, Indonesia, and `Unknown`. This is the bias check: where do unmatched titles concentrate?
+- Number of `tconst` matched by more than one Netflix title, and number of `ambiguous` matches.
+- 30 random unmatched titles (title, year, type, country), to judge whether T3 is needed.
 
-**Audit**
-- `scripts/03_audit_export.py` writes `docs/match_audit_sample.csv`: up to 40 random rows per tier with `show_id`, Netflix title / year / type / country, IMDb title / year / type, `tconst`, an IMDb URL (`https://www.imdb.com/title/<tconst>/`), `tier`, and an empty `correct` column. The user fills `correct` with `y` or `n`.
-- `scripts/03_audit_summary.py` reads the filled file and prints precision per tier. Tiers below 90% are removed from `mart.params.accepted_tiers`.
-- Use a fixed random seed so the sample is reproducible.
+**Audit** (`scripts/03_audit.py`, two modes, fixed random seed)
+- `export`: writes `docs/match_audit_sample.csv` with up to 30 random rows per built tier: `show_id`, Netflix title / year / type / country, IMDb title / year / type, `tconst`, IMDb URL (`https://www.imdb.com/title/<tconst>/`), `tier`, and an empty `correct` column. The user fills `correct` with `y` or `n`.
+- `summary`: reads the filled file and prints precision per tier. It changes nothing. If a tier is below 90%, edit `mart.params.accepted_tiers` by hand and log it in PRD section 10.
 
 **Done when:** the P3 checks in section 7 pass and the audit precision per tier is recorded in `docs/match_report.md`.
 
-## 6. Phase 4 — Analysis marts in SQL (1-1.5 days)
+## 6. Phase 4 — Analysis marts in SQL (about 1 day)
 
-All marts read thresholds from `mart.params`, use accepted tiers only, and are rebuilt by `scripts/04_run_marts.py`. Segment-level tables carry `n_matched` and `small_n`.
+All marts read thresholds from `mart.params`, use accepted tiers only, and are built by one script, `scripts/04_build_marts.py`, which runs the SQL, exports the CSVs and prints a summary. Segment-level tables carry `n_matched` and `small_n`.
 
 | Mart | Grain | Key columns |
 |---|---|---|
-| `mart.catalog_summary` | one row | titles, matched, match rate, high-rated count, overall high-rated rate |
-| `mart.match_quality` | slice (type, tier, country, year_added) | n_titles, n_matched, match_rate |
-| `mart.quality_index_genre` / `_country` / `_rating_group` | segment | n_matched, n_high, high_rate, quality_index, share_of_catalog, small_n, quadrant |
+| `mart.catalog_summary` | one row | titles, matched, match_rate, high_rated_n, overall_high_rate |
+| `mart.quality_index` | dimension (`genre`, `country`, `rating_group`) x segment | n_matched, n_high, high_rate, quality_index, share_of_catalog, small_n, quadrant |
 | `mart.coverage_gap_genre` | IMDb genre x type group (movie / series) | netflix_high_n, netflix_high_share, world_high_n, world_high_share, coverage_gap, n_matched, small_n |
-| `mart.growth_by_year_added` | year_added x type | titles added (null `year_added` excluded, noted in column comment) |
-| `mart.indonesia_genre_mix` | Netflix genre | indonesia_n, indonesia_pct, global_n, global_pct |
-| `mart.indonesia_rating_mix` | rating_group | same shape |
-| `mart.indonesia_growth` | year_added | indonesia titles added, global titles added |
-| `mart.indonesia_titles` | title | title, type, year, genres, IMDb rating and votes (if matched) |
-| `mart.sensitivity_genre` | threshold pair x genre | quality_index, rank; plus Spearman rank correlation vs the baseline (use `corr()` over ranks) |
+| `mart.growth_by_year_added` | year_added x type | titles_global, titles_indonesia (null `year_added` excluded) |
+| `mart.indonesia_vs_global` | dimension (`genre`, `rating_group`) x segment | indonesia_n, indonesia_pct, global_n, global_pct |
+| `mart.sensitivity_genre` | scenario x genre | quality_index, rank |
 
 Implementation notes:
-- Bridge-table counts use `COUNT(DISTINCT show_id)` inside each segment.
-- Whole-catalog rate uses distinct matched titles (not bridge rows).
-- Sensitivity: run the same Quality-index SQL for rating in {6.5, 7.0, 7.5} x votes in {500, 1000, 5000}, as a SQL function with parameters or a Python loop that executes the same SQL.
-- `scripts/04_export_marts.py` writes `dashboard/data/<mart>.csv` for **aggregate marts only**. `mart.indonesia_titles` is title-level and stays in gitignored `data/clean/`.
-- `docs/phase4_results.md`: a short, factual list of the top and bottom segments with their n and the sensitivity result. It feeds the Phase 6 memo, so numbers only, no interpretation.
+- Bridge-table counts use `COUNT(DISTINCT show_id)` inside each segment. The whole-catalog rate uses distinct matched titles, not bridge rows.
+- **Sensitivity: 3 scenarios only** (baseline 7.0 / 1,000 votes, lenient 6.5 / 500, strict 7.5 / 5,000), genre dimension only. Report how many of the baseline's top 5 and bottom 5 genres stay in the top 5 and bottom 5 in each scenario. No full grid, no rank-correlation statistics.
+- Export aggregate marts to `dashboard/data/<mart>.csv`. Nothing title-level goes to a committed folder.
+- The script prints (no results file): the analysis-population size, the top and bottom 5 segments per dimension with their n, and the sensitivity overlap counts. That output feeds the Phase 6 memo.
 
 **Done when:** the P4 checks in section 7 pass.
 
@@ -192,23 +189,21 @@ Implementation notes:
 
 ## 7. Verification checkpoints (evidence, not assumption)
 
-**P2**
-- `netflix.titles` = 8,807 rows. Bridge tables have the same row counts as their CSVs. Indonesia rows in `title_country` = 90 (or the new number if `COUNTRY_FIX` changed).
-- `imdb.titles` row count = data rows in `imdb_filtered.csv`. No nulls in `avg_rating` / `num_votes`.
-- `imdb.title_names` has zero empty `name_norm` values. Count of Netflix titles with empty `title_norm` is printed.
-- Running the loader twice gives identical counts. `python -m pytest` passes.
+**P2** (done)
+- `netflix.titles` = 8,807 rows. Bridge tables match their CSVs. Indonesia rows in `title_country` = 90 (or the new number if `COUNTRY_FIX` changed).
+- `imdb.titles` row count = data rows in `imdb_filtered.csv`. `imdb.title_names` has zero empty `name_norm` values.
+- Loader run twice gives identical counts. `python -m pytest` passes.
 
 **P3**
 - `title_match` has exactly 8,807 rows, one per `show_id`. Tier counts add up to 8,807.
-- Report shows match rate by type, tier, country (including Indonesia) and year added.
+- Report shows match rate by type, tier and country (including Indonesia), plus the 30-title unmatched sample.
 - Five known titles checked by hand against IMDb.
 - Audit file exported; precision per tier computed after the manual pass.
 
 **P4**
 - Quality index of the whole catalog recomputed independently equals 1.0 (assert in the script).
-- Two segments recounted with a hand-written query match the mart.
+- One segment recounted with a hand-written query matches the mart.
 - No segment below `min_n` appears in a ranking without `small_n` set.
-- Sensitivity table exists and the rank correlation is reported.
 - The analysis uses accepted tiers only, and the number of matched titles in the analysis population is printed.
 
 ## 8. Handoff to Phase 5 (Power BI, manual)

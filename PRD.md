@@ -15,7 +15,7 @@ Where does Netflix's catalog deliver audience-rated quality, where is it thin co
 | 0 | Setup, raw profiling | Done | Manual |
 | 1 | Clean Netflix, build bridge tables | Done | Manual |
 | 2 | Model in PostgreSQL, load both sources | Done | Claude Code |
-| 3 | Match Netflix to IMDb, audit the match | Next | Claude Code + manual audit |
+| 3 | Match Netflix to IMDb, audit the match | In progress (manual audit pending) | Claude Code + manual audit |
 | 4 | Analysis marts in SQL | | Claude Code |
 | 5 | Power BI dashboard (3 pages) | | Manual |
 | 6 | 1-page findings memo | | Manual |
@@ -52,12 +52,12 @@ No shared ID exists, so titles are matched by normalized name + year + type, in 
 |---|---|
 | T1 `exact` | Same normalized name (IMDb primary *or* original title), compatible type, exact year rule |
 | T2 `year_pm1` | Same as T1 with the year rule widened by 1 |
-| T3 `fuzzy` | Trigram similarity >= 0.85 on normalized name, normalized length >= 5, T2 year rule, only for titles still unmatched |
+| T3 `fuzzy` (conditional) | Trigram similarity >= 0.85, normalized length >= 5, T2 year rule, only for titles still unmatched. **Built only if** T1+T2 leave the match rate below 85% and a sample of unmatched titles shows near-misses (subtitles, punctuation) rather than titles that are simply not on IMDb |
 
 - **Type compatibility:** Netflix `Movie` ↔ IMDb `movie`, `tvMovie`, `tvSpecial`. Netflix `TV Show` ↔ IMDb `tvSeries`, `tvMiniSeries`.
 - **Year rule:** movies compare `release_year` with IMDb `startYear`. TV shows check that `release_year` falls inside the IMDb `startYear`-`endYear` span (open-ended if ongoing), because Netflix's year for a series may be a later season.
 - **Ties:** pick the candidate with the most votes; store `candidate_count` and `ambiguous`.
-- **Audit:** 40 random matches per tier (all if fewer) are checked by hand. A tier is accepted into the analysis only with audit precision >= 90%.
+- **Audit:** 30 random matches per built tier (all if fewer) are checked by hand. A tier is accepted into the analysis only with audit precision >= 90%.
 
 ## 7. Limitations (must appear on the dashboard limitations page and in the memo)
 1. IMDb votes are a popularity proxy, not Netflix viewership.
@@ -69,7 +69,7 @@ No shared ID exists, so titles are matched by normalized name + year + type, in 
 7. Findings are "as of the 2021 catalog".
 
 ## 8. Success criteria
-- Match rate reported overall and sliced by type, tier, country and year added; audit precision stated per tier.
+- Match rate reported overall and sliced by type, tier and country (including Indonesia); audit precision stated per tier.
 - Every headline number shown with its n.
 - All numbers reproducible from scripts; a fresh clone plus the README Data section rebuilds everything.
 - Sensitivity table shows whether top and bottom segments survive threshold changes.
@@ -89,3 +89,6 @@ No shared ID exists, so titles are matched by normalized name + year + type, in 
 | 2026-10-08 | `normalize_title` drops all combining-mark categories (`Mn`, `Mc`, `Me`), not only those with a combining class | Spacing vowel signs (e.g. Devanagari) would otherwise become spaces in step 4 and split one word. NFKD also turns Hangul syllables into jamo. Both sides use the same function, so joins are unaffected |
 | 2026-10-08 | Schema adds CHECKs beyond the guide: allowed `title_type` and `rating_group` values, rating/vote/year ranges, `name_norm <> ''`, `(match_tier = 'unmatched') = (tconst IS NULL)`, single-row `mart.params`. `imdb.titles.title_type` and `primary_title` are NOT NULL | Catch bad loads at insert time. The data has no nulls in these columns |
 | 2026-10-08 | `mart.params` is created only if missing and is not dropped by the loader | Tier decisions written after the Phase 3 audit survive a reload |
+| 2026-10-08 | `ambiguous` = more than one IMDb candidate passed the tier's rules (`candidate_count > 1`) | Section 6 did not define it. 283 of 7,492 matches (3.8%) |
+| 2026-10-08 | Phase 3 spec check, no rule changed. TV shows match about as well as movies (84.9% vs 85.1%), so the TV year rule does not under-match. Titles with no country match at 55.2%, against 82-92% for the 10 biggest countries. 6 of the 7 IMDb titles claimed by two Netflix titles are Netflix duplicates (the same film under 2 `show_id`s) | All three are reported in `docs/match_report.md`. The Unknown-country gap falls under limitation 3 in section 7. The duplicates come from the Phase 1 data and are left as they are |
+| 2026-10-08 | Match report also shows match rate by `year_added` and an unmatched near-miss count (same name and type in IMDb, year outside the T2 window) | Extra diagnostics for the T3 decision. Neither changes a rule |
