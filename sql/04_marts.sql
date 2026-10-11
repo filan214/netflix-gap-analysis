@@ -125,7 +125,9 @@ COMMENT ON COLUMN mart.quality_index.not_ranked IS
 -- ------------------------------------------------------------------ country_votes_context
 -- Limitations-page support: is a low country index driven by low IMDb visibility (few votes)
 -- or by low ratings? Countries with n_matched >= min_n only (Unknown included, flagged not_ranked).
--- pct_rated_7plus_regardless_of_votes uses the min_rating threshold with no vote condition.
+-- pct_rated_at_or_above_min_rating uses the min_rating threshold with no vote condition.
+-- visibility_penalty = pct_rated_at_or_above_min_rating - high_rate (from mart.quality_index): the share of
+-- titles rated high enough that fail only the vote threshold. Never negative, since high-rated titles are a subset.
 CREATE TABLE mart.country_votes_context AS
 WITH p AS (SELECT * FROM mart.params),
 t AS (
@@ -136,11 +138,12 @@ SELECT t.country,
        count(*)                                                          AS n_matched,
        percentile_cont(0.5) WITHIN GROUP (ORDER BY t.num_votes)          AS median_votes,
        round(avg((t.num_votes >= p.min_votes)::int), 4)                  AS pct_titles_over_1000_votes,
-       round(avg((t.avg_rating >= p.min_rating)::int), 4)                AS pct_rated_7plus_regardless_of_votes,
+       round(avg((t.avg_rating >= p.min_rating)::int), 4)                AS pct_rated_at_or_above_min_rating,
+       round(avg((t.avg_rating >= p.min_rating)::int), 4) - q.high_rate  AS visibility_penalty,
        q.quality_index, q.qi_rank, q.not_ranked
 FROM t CROSS JOIN p
 JOIN mart.quality_index q ON q.dimension = 'country' AND q.segment = t.country
-GROUP BY t.country, p.min_n, q.quality_index, q.qi_rank, q.not_ranked
+GROUP BY t.country, p.min_n, q.high_rate, q.quality_index, q.qi_rank, q.not_ranked
 HAVING count(*) >= p.min_n
 ORDER BY t.country;
 
@@ -148,6 +151,17 @@ COMMENT ON TABLE mart.country_votes_context IS
     'Per country with >= min_n matched titles: IMDb visibility (votes) vs ratings, next to the Quality index. Supports the limitations page.';
 COMMENT ON COLUMN mart.country_votes_context.pct_titles_over_1000_votes IS
     'Share of matched titles with num_votes >= mart.params.min_votes (1,000 by default).';
+COMMENT ON COLUMN mart.country_votes_context.visibility_penalty IS
+    'pct_rated_at_or_above_min_rating - quality_index.high_rate: share of titles that clear the rating threshold but not the vote threshold.';
+
+-- Column comment carries the min_rating value in force when the mart was built.
+DO $$
+BEGIN
+    EXECUTE format(
+        'COMMENT ON COLUMN mart.country_votes_context.pct_rated_at_or_above_min_rating IS %L',
+        format('Share of matched titles with avg_rating >= min_rating (= %s at build time), with no vote condition.',
+               (SELECT min_rating FROM mart.params)));
+END $$;
 
 -- ------------------------------------------------------------------ coverage_gap_genre
 -- IMDb genres on both sides. Type group: movie = movie/tvMovie/tvSpecial, series = tvSeries/tvMiniSeries.

@@ -123,10 +123,17 @@ def run_checks(cur):
         JOIN imdb.titles i ON i.tconst = m.tconst
         WHERE tc.country = 'Nigeria' AND m.match_tier = ANY (%(t)s)""",
                {"t": p["tiers"], "r": p["min_rating"], "v": p["min_votes"]})
-    mart_row = one(cur, """SELECT n_matched, median_votes, pct_titles_over_1000_votes, pct_rated_7plus_regardless_of_votes
+    mart_row = one(cur, """SELECT n_matched, median_votes, pct_titles_over_1000_votes, pct_rated_at_or_above_min_rating
                            FROM mart.country_votes_context WHERE country = 'Nigeria'""")
-    checks.append((f"hand recount Nigeria votes context: n/median/over_1000/rated_7plus {tuple(hand)} vs mart {tuple(mart_row)}",
+    checks.append((f"hand recount Nigeria votes context: n/median/over_1000/rated_at_or_above_min {tuple(hand)} vs mart {tuple(mart_row)}",
                    tuple(hand) == tuple(mart_row)))
+    negative, pen_diff = one(cur, """
+        SELECT count(*) FILTER (WHERE c.visibility_penalty < 0),
+               count(*) FILTER (WHERE c.visibility_penalty <> c.pct_rated_at_or_above_min_rating - q.high_rate)
+        FROM mart.country_votes_context c
+        JOIN mart.quality_index q ON q.dimension = 'country' AND q.segment = c.country""")
+    checks.append((f"visibility_penalty never negative (negative rows: {negative}) and = rated share - high_rate "
+                   f"(differences: {pen_diff})", negative == 0 and pen_diff == 0))
 
     indo_base = one(cur, "SELECT DISTINCT indonesia_base_n FROM mart.indonesia_vs_global")[0]
     checks.append((f"Indonesia base n = matched Indonesian titles ({indo_base} of {summary['indo_titles']}, "
@@ -192,7 +199,7 @@ def print_summary(cur):
 
     rows = cur.execute("""
         SELECT country, n_matched, quality_index, median_votes, pct_titles_over_1000_votes,
-               pct_rated_7plus_regardless_of_votes, not_ranked
+               pct_rated_at_or_above_min_rating, visibility_penalty, not_ranked
         FROM mart.country_votes_context ORDER BY quality_index, country""").fetchall()
     overall = one(cur, """SELECT percentile_cont(0.5) WITHIN GROUP (ORDER BY num_votes),
                                  avg((num_votes >= (SELECT min_votes FROM mart.params))::int),
@@ -200,9 +207,10 @@ def print_summary(cur):
                           FROM mart.analysis_titles""")
     print(f"\n=== Country votes context, lowest {TOP} indices (all matched: median votes {overall[0]:,.0f}, "
           f"{fmt_pct(overall[1])} over 1,000 votes, {fmt_pct(overall[2])} rated 7+) ===")
-    for c, n, qi, med, over, r7, nr in rows[:TOP]:
+    for c, n, qi, med, over, r7, pen, nr in rows[:TOP]:
         print(f"    {c:<22} n={n:<4} index={float(qi):.2f}  median votes {med:>7,.0f}  "
-              f"over 1,000 votes {fmt_pct(over):>6}  rated 7+ {fmt_pct(r7):>6}{'  (not ranked)' if nr else ''}")
+              f"over 1,000 votes {fmt_pct(over):>6}  rated 7+ {fmt_pct(r7):>6}  "
+              f"visibility penalty {fmt_pct(pen):>6}{'  (not ranked)' if nr else ''}")
 
     for grp in ["movie", "series"]:
         rows = cur.execute("""
