@@ -205,11 +205,12 @@ def print_summary(cur):
                                  avg((num_votes >= (SELECT min_votes FROM mart.params))::int),
                                  avg((avg_rating >= (SELECT min_rating FROM mart.params))::int)
                           FROM mart.analysis_titles""")
+    rated_label = f"rated {float(one(cur, 'SELECT min_rating FROM mart.params')[0]):g}+"
     print(f"\n=== Country votes context, lowest {TOP} indices (all matched: median votes {overall[0]:,.0f}, "
-          f"{fmt_pct(overall[1])} over 1,000 votes, {fmt_pct(overall[2])} rated 7+) ===")
-    for c, n, qi, med, over, r7, pen, nr in rows[:TOP]:
+          f"{fmt_pct(overall[1])} over 1,000 votes, {fmt_pct(overall[2])} {rated_label}) ===")
+    for c, n, qi, med, over, r_min, pen, nr in rows[:TOP]:
         print(f"    {c:<22} n={n:<4} index={float(qi):.2f}  median votes {med:>7,.0f}  "
-              f"over 1,000 votes {fmt_pct(over):>6}  rated 7+ {fmt_pct(r7):>6}  "
+              f"over 1,000 votes {fmt_pct(over):>6}  {rated_label} {fmt_pct(r_min):>6}  "
               f"visibility penalty {fmt_pct(pen):>6}{'  (not ranked)' if nr else ''}")
 
     for grp in ["movie", "series"]:
