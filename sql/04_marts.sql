@@ -4,7 +4,7 @@
 -- Netflix titles matched by a tier in mart.params.accepted_tiers. Unmatched titles are
 -- counted in mart.catalog_summary and as n_titles in mart.quality_index.
 
-DROP TABLE IF EXISTS mart.catalog_summary, mart.quality_index, mart.coverage_gap_genre,
+DROP TABLE IF EXISTS mart.catalog_summary, mart.quality_index, mart.country_votes_context, mart.coverage_gap_genre,
                      mart.growth_by_year_added, mart.indonesia_vs_global, mart.sensitivity_genre;
 DROP FUNCTION IF EXISTS mart.qi_counts(numeric, int, boolean);
 DROP VIEW IF EXISTS mart.analysis_titles;
@@ -121,6 +121,33 @@ ORDER BY s.dimension, s.segment;
 
 COMMENT ON COLUMN mart.quality_index.not_ranked IS
     'Country Unknown: matches at 55.2% vs 82-92% for named countries, so its matched titles are not representative. Shown, never ranked, left out of the median share.';
+
+-- ------------------------------------------------------------------ country_votes_context
+-- Limitations-page support: is a low country index driven by low IMDb visibility (few votes)
+-- or by low ratings? Countries with n_matched >= min_n only (Unknown included, flagged not_ranked).
+-- pct_rated_7plus_regardless_of_votes uses the min_rating threshold with no vote condition.
+CREATE TABLE mart.country_votes_context AS
+WITH p AS (SELECT * FROM mart.params),
+t AS (
+    SELECT DISTINCT tc.country, a.show_id, a.avg_rating, a.num_votes
+    FROM mart.analysis_titles a JOIN netflix.title_country tc USING (show_id)
+)
+SELECT t.country,
+       count(*)                                                          AS n_matched,
+       percentile_cont(0.5) WITHIN GROUP (ORDER BY t.num_votes)          AS median_votes,
+       round(avg((t.num_votes >= p.min_votes)::int), 4)                  AS pct_titles_over_1000_votes,
+       round(avg((t.avg_rating >= p.min_rating)::int), 4)                AS pct_rated_7plus_regardless_of_votes,
+       q.quality_index, q.qi_rank, q.not_ranked
+FROM t CROSS JOIN p
+JOIN mart.quality_index q ON q.dimension = 'country' AND q.segment = t.country
+GROUP BY t.country, p.min_n, q.quality_index, q.qi_rank, q.not_ranked
+HAVING count(*) >= p.min_n
+ORDER BY t.country;
+
+COMMENT ON TABLE mart.country_votes_context IS
+    'Per country with >= min_n matched titles: IMDb visibility (votes) vs ratings, next to the Quality index. Supports the limitations page.';
+COMMENT ON COLUMN mart.country_votes_context.pct_titles_over_1000_votes IS
+    'Share of matched titles with num_votes >= mart.params.min_votes (1,000 by default).';
 
 -- ------------------------------------------------------------------ coverage_gap_genre
 -- IMDb genres on both sides. Type group: movie = movie/tvMovie/tvSpecial, series = tvSeries/tvMiniSeries.

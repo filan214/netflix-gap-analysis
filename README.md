@@ -74,6 +74,7 @@ Current result: 7,492 of 8,807 titles matched (85.1%). Movies 85.1%, TV shows 84
   - Country **Unknown** is kept but flagged `not_ranked`. It matches at 55.2% against 82–92% for named countries, so its matched titles are not representative. It is left out of rankings and of the median share.
   - Quadrant labels use the median share of ranked segments within each dimension.
 - **Coverage gap** (`coverage_gap_genre`; IMDb genres, movie and series groups): the genre's share of the world's high-rated titles ÷ its share of Netflix's high-rated titles. "World" means IMDb titles from 2000 on. Above 1 = Netflix is thin in that genre. The ratio is empty when Netflix has no high-rated title in the genre.
+- **Votes context** (`country_votes_context`): for each country with 30+ matched titles (Unknown included, flagged `not_ranked`), it lists the median votes, the share of titles with 1,000+ votes, the share rated 7+ with no vote condition, and the Quality index copied from `quality_index`. A low index with a normal "rated 7+" share but few titles over 1,000 votes reflects low IMDb visibility, not low ratings.
 - **Indonesia** (`indonesia_vs_global`, `growth_by_year_added`): descriptive counts and percentages only. The base n is the **79 matched** Indonesian titles; the other 11 of the 90 could not be matched to IMDb (`catalog_summary.indonesia_unmatched`).
 - **Sensitivity** (`sensitivity_genre`): the genre Quality index is rerun with the same SQL function (`mart.qi_counts`) in 4 scenarios: baseline 7.0 / 1,000, lenient 6.5 / 500, strict 7.5 / 5,000, and baseline without the 283 ambiguous matches. Stability = how many of the baseline's top 5 and bottom 5 genres stay there.
 - **Checks** (the build rolls back if any fails):
@@ -85,6 +86,7 @@ Current result: 7,492 of 8,807 titles matched (85.1%). Movies 85.1%, TV shows 84
   - Unknown not ranked
   - sensitivity baseline = `quality_index`
   - Indonesia base n = matched Indonesian titles
+  - `country_votes_context` covers every country with n >= 30, its index equals `quality_index`, and a hand-written recount of Nigeria matches
 
 ## Results
 
@@ -185,7 +187,11 @@ From PRD section 7, plus what the build showed.
 5. Country is the production-country field Netflix lists, often several per title. A title counts in each of its countries.
 6. Indonesia has 90 titles, of which 79 are matched. Per-genre slices are often single digits, so Indonesia is descriptive only, with no index.
 7. Findings are "as of the 2021 catalog".
-8. **The vote threshold dominates for some countries.** Nigeria's index of 0.00 comes from 0 high-rated titles in 91: only 7 of its matched titles have 1,000+ votes (median 112 votes), though 11 are rated 7.0 or higher. Indonesia's matched titles have a median of 780 votes, against 2,925 for all matched titles. Read low country indices as "low rating *or* low IMDb visibility".
+8. **Low country indices mix low ratings with low IMDb visibility.** `country_votes_context` separates the two; across all matched titles, 67.7% have 1,000+ votes and 38.0% are rated 7+.
+   - **Visibility-driven:** Taiwan (index 0.35, n 81). 58.0% of its titles are rated 7+, but only 16.1% have 1,000+ votes (median 172).
+   - **Both:** Nigeria (index 0.00, n 91). Only 7.7% have 1,000+ votes (median 112), and only 12.1% are rated 7+ even without a vote condition.
+   - **Indonesia** (index 0.66, n 79): median 780 votes, 39.2% over 1,000 votes, 26.6% rated 7+.
+   - Read a low index next to these two columns before calling a country low-quality.
 9. **The top of the genre ranking depends on thresholds.** Three of the baseline's top 5 genres drop out at 6.5 / 500 (see Results).
 10. The coverage gap compares all matched Netflix titles (453 of 7,492 released before 2000) with world titles from 2000 on, as PRD section 5 defines it.
 11. A known `exact` false positive exists outside the audit sample (s3857 *What If?*), so match precision is somewhat below the audited 96.7–100%.
