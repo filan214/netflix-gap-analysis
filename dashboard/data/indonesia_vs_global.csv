@@ -1,0 +1,47 @@
+dimension,segment,indonesia_n,indonesia_pct,global_n,global_pct,indonesia_base_n,global_base_n
+genre,Action & Adventure,6,0.0759,760,0.1014,79,7492
+genre,Anime Features,0,0.0000,50,0.0067,79,7492
+genre,Anime Series,1,0.0127,145,0.0194,79,7492
+genre,British TV Shows,0,0.0000,220,0.0294,79,7492
+genre,Children & Family Movies,5,0.0633,433,0.0578,79,7492
+genre,Classic & Cult TV,0,0.0000,25,0.0033,79,7492
+genre,Classic Movies,0,0.0000,106,0.0141,79,7492
+genre,Comedies,14,0.1772,1464,0.1954,79,7492
+genre,Crime TV Shows,1,0.0127,419,0.0559,79,7492
+genre,Cult Movies,0,0.0000,62,0.0083,79,7492
+genre,Documentaries,1,0.0127,668,0.0892,79,7492
+genre,Docuseries,0,0.0000,332,0.0443,79,7492
+genre,Dramas,54,0.6835,2202,0.2939,79,7492
+genre,Faith & Spirituality,4,0.0506,56,0.0075,79,7492
+genre,Horror Movies,10,0.1266,317,0.0423,79,7492
+genre,Independent Movies,1,0.0127,704,0.0940,79,7492
+genre,International Movies,71,0.8987,2368,0.3161,79,7492
+genre,International TV Shows,1,0.0127,1119,0.1494,79,7492
+genre,Kids' TV,1,0.0127,381,0.0509,79,7492
+genre,Korean TV Shows,0,0.0000,126,0.0168,79,7492
+genre,LGBTQ Movies,0,0.0000,92,0.0123,79,7492
+genre,Movies,0,0.0000,20,0.0027,79,7492
+genre,Music & Musicals,1,0.0127,305,0.0407,79,7492
+genre,Reality TV,0,0.0000,227,0.0303,79,7492
+genre,Romantic Movies,24,0.3038,576,0.0769,79,7492
+genre,Romantic TV Shows,0,0.0000,302,0.0403,79,7492
+genre,Sci-Fi & Fantasy,2,0.0253,209,0.0279,79,7492
+genre,Science & Nature TV,0,0.0000,80,0.0107,79,7492
+genre,Spanish-Language TV Shows,0,0.0000,145,0.0194,79,7492
+genre,Sports Movies,2,0.0253,188,0.0251,79,7492
+genre,Stand-Up Comedy,0,0.0000,300,0.0400,79,7492
+genre,Stand-Up Comedy & Talk Shows,0,0.0000,40,0.0053,79,7492
+genre,Teen TV Shows,0,0.0000,67,0.0089,79,7492
+genre,Thrillers,0,0.0000,537,0.0717,79,7492
+genre,TV Action & Adventure,0,0.0000,149,0.0199,79,7492
+genre,TV Comedies,1,0.0127,507,0.0677,79,7492
+genre,TV Dramas,1,0.0127,643,0.0858,79,7492
+genre,TV Horror,1,0.0127,68,0.0091,79,7492
+genre,TV Mysteries,0,0.0000,94,0.0125,79,7492
+genre,TV Sci-Fi & Fantasy,0,0.0000,77,0.0103,79,7492
+genre,TV Shows,0,0.0000,2,0.0003,79,7492
+genre,TV Thrillers,0,0.0000,50,0.0067,79,7492
+rating_group,Adult,20,0.2532,3592,0.4794,79,7492
+rating_group,Kids,8,0.1013,620,0.0828,79,7492
+rating_group,Not Rated / Unknown,0,0.0000,75,0.0100,79,7492
+rating_group,Teen/Family,51,0.6456,3205,0.4278,79,7492

@@ -1,0 +1,169 @@
+scenario_order,scenario,min_rating,min_votes,exclude_ambiguous,genre,n_matched,n_high,quality_index,small_n,rank
+1,baseline,7.0,1000,false,Classic Movies,106,79,2.6068,false,1
+1,baseline,7.0,1000,false,Anime Series,145,99,2.3881,false,2
+1,baseline,7.0,1000,false,TV Action & Adventure,149,87,2.0423,false,3
+1,baseline,7.0,1000,false,Teen TV Shows,67,38,1.9838,false,4
+1,baseline,7.0,1000,false,TV Mysteries,94,53,1.9721,false,5
+1,baseline,7.0,1000,false,TV Thrillers,50,28,1.9587,false,6
+1,baseline,7.0,1000,false,Crime TV Shows,419,232,1.9367,false,7
+1,baseline,7.0,1000,false,TV Sci-Fi & Fantasy,77,42,1.9078,false,8
+1,baseline,7.0,1000,false,TV Dramas,643,342,1.8603,false,9
+1,baseline,7.0,1000,false,Korean TV Shows,126,62,1.7211,false,10
+1,baseline,7.0,1000,false,Cult Movies,62,30,1.6924,false,11
+1,baseline,7.0,1000,false,Anime Features,50,24,1.6789,false,12
+1,baseline,7.0,1000,false,Docuseries,332,156,1.6435,false,13
+1,baseline,7.0,1000,false,TV Horror,68,31,1.5945,false,14
+1,baseline,7.0,1000,false,British TV Shows,220,99,1.5739,false,15
+1,baseline,7.0,1000,false,TV Comedies,507,227,1.5660,false,16
+1,baseline,7.0,1000,false,Romantic TV Shows,302,130,1.5056,false,17
+1,baseline,7.0,1000,false,International TV Shows,1119,472,1.4753,false,18
+1,baseline,7.0,1000,false,Science & Nature TV,80,31,1.3553,false,19
+1,baseline,7.0,1000,false,Stand-Up Comedy,300,113,1.3175,false,20
+1,baseline,7.0,1000,false,Spanish-Language TV Shows,145,54,1.3026,false,21
+1,baseline,7.0,1000,false,Documentaries,668,219,1.1467,false,22
+1,baseline,7.0,1000,false,Stand-Up Comedy & Talk Shows,40,13,1.1367,false,23
+1,baseline,7.0,1000,false,Dramas,2202,574,0.9117,false,24
+1,baseline,7.0,1000,false,Reality TV,227,59,0.9091,false,25
+1,baseline,7.0,1000,false,Music & Musicals,305,78,0.8945,false,26
+1,baseline,7.0,1000,false,Sports Movies,188,47,0.8744,false,27
+1,baseline,7.0,1000,false,Independent Movies,704,166,0.8247,false,28
+1,baseline,7.0,1000,false,International Movies,2368,470,0.6942,false,29
+1,baseline,7.0,1000,false,LGBTQ Movies,92,18,0.6843,false,30
+1,baseline,7.0,1000,false,Action & Adventure,760,142,0.6535,false,31
+1,baseline,7.0,1000,false,Kids' TV,381,69,0.6334,false,32
+1,baseline,7.0,1000,false,Sci-Fi & Fantasy,209,37,0.6192,false,33
+1,baseline,7.0,1000,false,Comedies,1464,237,0.5662,false,34
+1,baseline,7.0,1000,false,Thrillers,537,83,0.5406,false,35
+1,baseline,7.0,1000,false,Romantic Movies,576,85,0.5161,false,36
+1,baseline,7.0,1000,false,Children & Family Movies,433,61,0.4927,false,37
+1,baseline,7.0,1000,false,Faith & Spirituality,56,5,0.3123,false,38
+1,baseline,7.0,1000,false,Horror Movies,317,20,0.2207,false,39
+1,baseline,7.0,1000,false,Classic & Cult TV,25,21,2.9380,true,
+1,baseline,7.0,1000,false,Movies,20,7,1.2242,true,
+1,baseline,7.0,1000,false,TV Shows,2,0,0.0000,true,
+2,lenient,6.5,500,false,Classic Movies,106,99,2.0598,false,1
+2,lenient,6.5,500,false,Anime Series,145,115,1.7492,false,2
+2,lenient,6.5,500,false,Anime Features,50,38,1.6762,false,3
+2,lenient,6.5,500,false,TV Thrillers,50,38,1.6762,false,4
+2,lenient,6.5,500,false,Cult Movies,62,47,1.6719,false,5
+2,lenient,6.5,500,false,TV Action & Adventure,149,109,1.6134,false,6
+2,lenient,6.5,500,false,Teen TV Shows,67,49,1.6130,false,7
+2,lenient,6.5,500,false,Crime TV Shows,419,300,1.5791,false,8
+2,lenient,6.5,500,false,TV Dramas,643,441,1.5126,false,9
+2,lenient,6.5,500,false,TV Mysteries,94,64,1.5016,false,10
+2,lenient,6.5,500,false,TV Sci-Fi & Fantasy,77,51,1.4608,false,11
+2,lenient,6.5,500,false,Docuseries,332,215,1.4282,false,12
+2,lenient,6.5,500,false,British TV Shows,220,138,1.3834,false,13
+2,lenient,6.5,500,false,TV Comedies,507,310,1.3485,false,14
+2,lenient,6.5,500,false,Korean TV Shows,126,77,1.3478,false,15
+2,lenient,6.5,500,false,Spanish-Language TV Shows,145,86,1.3081,false,16
+2,lenient,6.5,500,false,TV Horror,68,40,1.2973,false,17
+2,lenient,6.5,500,false,Science & Nature TV,80,47,1.2957,false,18
+2,lenient,6.5,500,false,International TV Shows,1119,656,1.2929,false,19
+2,lenient,6.5,500,false,Stand-Up Comedy,300,169,1.2424,false,20
+2,lenient,6.5,500,false,Documentaries,668,368,1.2150,false,21
+2,lenient,6.5,500,false,Romantic TV Shows,302,163,1.1904,false,22
+2,lenient,6.5,500,false,Sports Movies,188,86,1.0089,false,23
+2,lenient,6.5,500,false,Dramas,2202,992,0.9936,false,24
+2,lenient,6.5,500,false,LGBTQ Movies,92,41,0.9829,false,25
+2,lenient,6.5,500,false,Independent Movies,704,308,0.9649,false,26
+2,lenient,6.5,500,false,Music & Musicals,305,132,0.9545,false,27
+2,lenient,6.5,500,false,Reality TV,227,95,0.9230,false,28
+2,lenient,6.5,500,false,Stand-Up Comedy & Talk Shows,40,16,0.8822,false,29
+2,lenient,6.5,500,false,Kids' TV,381,140,0.8104,false,30
+2,lenient,6.5,500,false,International Movies,2368,851,0.7926,false,31
+2,lenient,6.5,500,false,Action & Adventure,760,271,0.7864,false,32
+2,lenient,6.5,500,false,Sci-Fi & Fantasy,209,70,0.7387,false,33
+2,lenient,6.5,500,false,Comedies,1464,449,0.6764,false,34
+2,lenient,6.5,500,false,Romantic Movies,576,176,0.6739,false,35
+2,lenient,6.5,500,false,Thrillers,537,160,0.6571,false,36
+2,lenient,6.5,500,false,Children & Family Movies,433,125,0.6367,false,37
+2,lenient,6.5,500,false,Faith & Spirituality,56,14,0.5514,false,38
+2,lenient,6.5,500,false,Horror Movies,317,45,0.3131,false,39
+2,lenient,6.5,500,false,Classic & Cult TV,25,22,1.9408,true,
+2,lenient,6.5,500,false,Movies,20,8,0.8822,true,
+2,lenient,6.5,500,false,TV Shows,2,0,0.0000,true,
+3,strict,7.5,5000,false,TV Action & Adventure,149,63,3.6579,false,1
+3,strict,7.5,5000,false,TV Thrillers,50,20,3.4605,false,2
+3,strict,7.5,5000,false,Classic Movies,106,42,3.4279,false,3
+3,strict,7.5,5000,false,Anime Series,145,57,3.4008,false,4
+3,strict,7.5,5000,false,TV Sci-Fi & Fantasy,77,26,2.9212,false,5
+3,strict,7.5,5000,false,TV Horror,68,21,2.6717,false,6
+3,strict,7.5,5000,false,TV Mysteries,94,28,2.5770,false,7
+3,strict,7.5,5000,false,TV Dramas,643,182,2.4487,false,8
+3,strict,7.5,5000,false,Crime TV Shows,419,115,2.3745,false,9
+3,strict,7.5,5000,false,Teen TV Shows,67,18,2.3242,false,10
+3,strict,7.5,5000,false,Cult Movies,62,16,2.2326,false,11
+3,strict,7.5,5000,false,British TV Shows,220,55,2.1628,false,12
+3,strict,7.5,5000,false,TV Comedies,507,123,2.0988,false,13
+3,strict,7.5,5000,false,Korean TV Shows,126,27,1.8538,false,14
+3,strict,7.5,5000,false,International TV Shows,1119,209,1.6158,false,15
+3,strict,7.5,5000,false,Romantic TV Shows,302,56,1.6042,false,16
+3,strict,7.5,5000,false,Docuseries,332,49,1.2768,false,17
+3,strict,7.5,5000,false,Science & Nature TV,80,11,1.1895,false,18
+3,strict,7.5,5000,false,Spanish-Language TV Shows,145,17,1.0143,false,19
+3,strict,7.5,5000,false,Anime Features,50,5,0.8651,false,20
+3,strict,7.5,5000,false,Dramas,2202,217,0.8526,false,21
+3,strict,7.5,5000,false,Stand-Up Comedy,300,27,0.7786,false,22
+3,strict,7.5,5000,false,Sci-Fi & Fantasy,209,18,0.7451,false,23
+3,strict,7.5,5000,false,Action & Adventure,760,62,0.7058,false,24
+3,strict,7.5,5000,false,Documentaries,668,52,0.6735,false,25
+3,strict,7.5,5000,false,LGBTQ Movies,92,7,0.6582,false,26
+3,strict,7.5,5000,false,Stand-Up Comedy & Talk Shows,40,3,0.6488,false,27
+3,strict,7.5,5000,false,Independent Movies,704,52,0.6390,false,28
+3,strict,7.5,5000,false,International Movies,2368,165,0.6028,false,29
+3,strict,7.5,5000,false,Sports Movies,188,13,0.5982,false,30
+3,strict,7.5,5000,false,Kids' TV,381,26,0.5904,false,31
+3,strict,7.5,5000,false,Reality TV,227,15,0.5717,false,32
+3,strict,7.5,5000,false,Thrillers,537,35,0.5639,false,33
+3,strict,7.5,5000,false,Music & Musicals,305,19,0.5389,false,34
+3,strict,7.5,5000,false,Comedies,1464,83,0.4905,false,35
+3,strict,7.5,5000,false,Children & Family Movies,433,20,0.3996,false,36
+3,strict,7.5,5000,false,Romantic Movies,576,21,0.3154,false,37
+3,strict,7.5,5000,false,Faith & Spirituality,56,2,0.3090,false,38
+3,strict,7.5,5000,false,Horror Movies,317,7,0.1910,false,39
+3,strict,7.5,5000,false,Classic & Cult TV,25,21,7.2671,true,
+3,strict,7.5,5000,false,Movies,20,4,1.7303,true,
+3,strict,7.5,5000,false,TV Shows,2,0,0.0000,true,
+4,baseline_no_ambiguous,7.0,1000,true,Classic Movies,105,78,2.6394,false,1
+4,baseline_no_ambiguous,7.0,1000,true,Anime Series,140,98,2.4871,false,2
+4,baseline_no_ambiguous,7.0,1000,true,TV Thrillers,44,26,2.0995,false,3
+4,baseline_no_ambiguous,7.0,1000,true,Teen TV Shows,63,36,2.0303,false,4
+4,baseline_no_ambiguous,7.0,1000,true,TV Mysteries,79,45,2.0239,false,5
+4,baseline_no_ambiguous,7.0,1000,true,TV Action & Adventure,133,75,2.0036,false,6
+4,baseline_no_ambiguous,7.0,1000,true,TV Sci-Fi & Fantasy,73,40,1.9468,false,7
+4,baseline_no_ambiguous,7.0,1000,true,Crime TV Shows,380,203,1.8980,false,8
+4,baseline_no_ambiguous,7.0,1000,true,TV Dramas,574,305,1.8879,false,9
+4,baseline_no_ambiguous,7.0,1000,true,Anime Features,49,24,1.7402,false,10
+4,baseline_no_ambiguous,7.0,1000,true,Cult Movies,62,30,1.7192,false,11
+4,baseline_no_ambiguous,7.0,1000,true,Korean TV Shows,115,53,1.6375,false,12
+4,baseline_no_ambiguous,7.0,1000,true,Docuseries,314,144,1.6294,false,13
+4,baseline_no_ambiguous,7.0,1000,true,TV Horror,61,27,1.5726,false,14
+4,baseline_no_ambiguous,7.0,1000,true,TV Comedies,482,212,1.5627,false,15
+4,baseline_no_ambiguous,7.0,1000,true,British TV Shows,201,88,1.5555,false,16
+4,baseline_no_ambiguous,7.0,1000,true,Romantic TV Shows,287,124,1.5351,false,17
+4,baseline_no_ambiguous,7.0,1000,true,International TV Shows,1032,429,1.4770,false,18
+4,baseline_no_ambiguous,7.0,1000,true,Stand-Up Comedy,300,113,1.3383,false,19
+4,baseline_no_ambiguous,7.0,1000,true,Spanish-Language TV Shows,134,50,1.3257,false,20
+4,baseline_no_ambiguous,7.0,1000,true,Science & Nature TV,77,28,1.2920,false,21
+4,baseline_no_ambiguous,7.0,1000,true,Stand-Up Comedy & Talk Shows,38,13,1.2155,false,22
+4,baseline_no_ambiguous,7.0,1000,true,Documentaries,657,211,1.1411,false,23
+4,baseline_no_ambiguous,7.0,1000,true,Dramas,2132,558,0.9299,false,24
+4,baseline_no_ambiguous,7.0,1000,true,Music & Musicals,299,78,0.9269,false,25
+4,baseline_no_ambiguous,7.0,1000,true,Reality TV,208,51,0.8712,false,26
+4,baseline_no_ambiguous,7.0,1000,true,Sports Movies,184,45,0.8689,false,27
+4,baseline_no_ambiguous,7.0,1000,true,Independent Movies,678,160,0.8385,false,28
+4,baseline_no_ambiguous,7.0,1000,true,International Movies,2298,452,0.6988,false,29
+4,baseline_no_ambiguous,7.0,1000,true,LGBTQ Movies,89,17,0.6787,false,30
+4,baseline_no_ambiguous,7.0,1000,true,Action & Adventure,734,138,0.6680,false,31
+4,baseline_no_ambiguous,7.0,1000,true,Sci-Fi & Fantasy,204,37,0.6444,false,32
+4,baseline_no_ambiguous,7.0,1000,true,Kids' TV,367,66,0.6390,false,33
+4,baseline_no_ambiguous,7.0,1000,true,Comedies,1436,235,0.5814,false,34
+4,baseline_no_ambiguous,7.0,1000,true,Thrillers,522,81,0.5513,false,35
+4,baseline_no_ambiguous,7.0,1000,true,Romantic Movies,563,83,0.5238,false,36
+4,baseline_no_ambiguous,7.0,1000,true,Children & Family Movies,427,60,0.4992,false,37
+4,baseline_no_ambiguous,7.0,1000,true,Faith & Spirituality,55,5,0.3230,false,38
+4,baseline_no_ambiguous,7.0,1000,true,Horror Movies,310,20,0.2292,false,39
+4,baseline_no_ambiguous,7.0,1000,true,Classic & Cult TV,25,21,2.9845,true,
+4,baseline_no_ambiguous,7.0,1000,true,Movies,20,7,1.2435,true,
+4,baseline_no_ambiguous,7.0,1000,true,TV Shows,2,0,0.0000,true,

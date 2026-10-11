@@ -1,0 +1,170 @@
+dimension,segment,n_titles,n_matched,n_high,high_rate,quality_index,share_of_catalog,median_share,small_n,not_ranked,qi_rank,quadrant
+country,Japan,318,261,137,0.5249,1.8359,0.0348,0.0114,false,false,1,Core strength
+country,Ireland,46,42,22,0.5238,1.8321,0.0056,0.0114,false,false,2,Scale-up candidate
+country,South Korea,231,202,99,0.4901,1.7142,0.0270,0.0114,false,false,3,Core strength
+country,United Kingdom,806,712,277,0.3890,1.3607,0.0950,0.0114,false,false,4,Core strength
+country,New Zealand,33,32,11,0.3438,1.2023,0.0043,0.0114,false,false,5,Scale-up candidate
+country,Germany,226,205,70,0.3415,1.1943,0.0274,0.0114,false,false,6,Core strength
+country,Sweden,42,36,12,0.3333,1.1659,0.0048,0.0114,false,false,7,Scale-up candidate
+country,United States,3690,3284,1043,0.3176,1.1109,0.4383,0.0114,false,false,8,Core strength
+country,Turkey,113,92,29,0.3152,1.1025,0.0123,0.0114,false,false,9,Core strength
+country,Australia,160,146,45,0.3082,1.0780,0.0195,0.0114,false,false,10,Average
+country,Belgium,90,82,24,0.2927,1.0237,0.0109,0.0114,false,false,11,Average
+country,Denmark,48,42,12,0.2857,0.9993,0.0056,0.0114,false,false,12,Average
+country,France,393,362,99,0.2735,0.9565,0.0483,0.0114,false,false,13,Average
+country,Argentina,91,78,21,0.2692,0.9417,0.0104,0.0114,false,false,14,Average
+country,Spain,232,199,51,0.2563,0.8964,0.0266,0.0114,false,false,15,Volume without quality
+country,Mexico,169,149,38,0.2550,0.8920,0.0199,0.0114,false,false,16,Volume without quality
+country,Canada,445,395,99,0.2506,0.8766,0.0527,0.0114,false,false,17,Volume without quality
+country,India,1046,945,235,0.2487,0.8698,0.1261,0.0114,false,false,18,Volume without quality
+country,Netherlands,50,45,11,0.2444,0.8550,0.0060,0.0114,false,false,19,Weak and small
+country,Poland,41,38,9,0.2368,0.8284,0.0051,0.0114,false,false,20,Weak and small
+country,Italy,100,89,19,0.2135,0.7467,0.0119,0.0114,false,false,21,Volume without quality
+country,China,162,151,32,0.2119,0.7412,0.0202,0.0114,false,false,22,Volume without quality
+country,Egypt,117,90,19,0.2111,0.7384,0.0120,0.0114,false,false,23,Volume without quality
+country,Hong Kong,105,93,18,0.1935,0.6770,0.0124,0.0114,false,false,24,Volume without quality
+country,Colombia,52,42,8,0.1905,0.6662,0.0056,0.0114,false,false,25,Weak and small
+country,Brazil,97,79,15,0.1899,0.6641,0.0105,0.0114,false,false,26,Weak and small
+country,Indonesia,90,79,15,0.1899,0.6641,0.0105,0.0114,false,false,27,Weak and small
+country,Thailand,70,59,10,0.1695,0.5928,0.0079,0.0114,false,false,28,Weak and small
+country,South Africa,62,56,8,0.1429,0.4997,0.0075,0.0114,false,false,29,Weak and small
+country,Singapore,41,34,4,0.1176,0.4115,0.0045,0.0114,false,false,30,Weak and small
+country,Philippines,83,81,9,0.1111,0.3886,0.0108,0.0114,false,false,31,Weak and small
+country,United Arab Emirates,37,36,4,0.1111,0.3886,0.0048,0.0114,false,false,32,Weak and small
+country,Taiwan,89,81,8,0.0988,0.3454,0.0108,0.0114,false,false,33,Weak and small
+country,Nigeria,103,91,0,0.0000,0.0000,0.0121,0.0114,false,false,34,Volume without quality
+country,Afghanistan,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Albania,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Algeria,3,3,1,0.3333,1.1659,0.0004,0.0114,true,false,,
+country,Angola,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Armenia,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Austria,12,9,2,0.2222,0.7773,0.0012,0.0114,true,false,,
+country,Azerbaijan,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Bahamas,1,1,1,1.0000,3.4977,0.0001,0.0114,true,false,,
+country,Bangladesh,4,4,2,0.5000,1.7488,0.0005,0.0114,true,false,,
+country,Belarus,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Bermuda,1,1,1,1.0000,3.4977,0.0001,0.0114,true,false,,
+country,Botswana,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Bulgaria,10,7,1,0.1429,0.4997,0.0009,0.0114,true,false,,
+country,Burkina Faso,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Cambodia,6,6,2,0.3333,1.1659,0.0008,0.0114,true,false,,
+country,Cameroon,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Cayman Islands,2,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Chile,29,27,1,0.0370,0.1295,0.0036,0.0114,true,false,,
+country,Croatia,4,3,1,0.3333,1.1659,0.0004,0.0114,true,false,,
+country,Cuba,1,1,1,1.0000,3.4977,0.0001,0.0114,true,false,,
+country,Cyprus,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Czech Republic,22,21,4,0.1905,0.6662,0.0028,0.0114,true,false,,
+country,Dominican Republic,1,0,0,,,0.0000,0.0114,true,false,,
+country,East Germany,1,1,1,1.0000,3.4977,0.0001,0.0114,true,false,,
+country,Ecuador,1,1,1,1.0000,3.4977,0.0001,0.0114,true,false,,
+country,Ethiopia,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Finland,11,10,5,0.5000,1.7488,0.0013,0.0114,true,false,,
+country,Georgia,2,1,1,1.0000,3.4977,0.0001,0.0114,true,false,,
+country,Ghana,5,5,0,0.0000,0.0000,0.0007,0.0114,true,false,,
+country,Greece,11,8,4,0.5000,1.7488,0.0011,0.0114,true,false,,
+country,Guatemala,2,2,0,0.0000,0.0000,0.0003,0.0114,true,false,,
+country,Hungary,11,10,7,0.7000,2.4484,0.0013,0.0114,true,false,,
+country,Iceland,11,10,6,0.6000,2.0986,0.0013,0.0114,true,false,,
+country,Iran,4,4,1,0.2500,0.8744,0.0005,0.0114,true,false,,
+country,Iraq,2,2,1,0.5000,1.7488,0.0003,0.0114,true,false,,
+country,Israel,30,27,10,0.3704,1.2954,0.0036,0.0114,true,false,,
+country,Jamaica,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Jordan,9,9,2,0.2222,0.7773,0.0012,0.0114,true,false,,
+country,Kazakhstan,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Kenya,6,5,0,0.0000,0.0000,0.0007,0.0114,true,false,,
+country,Kuwait,8,8,0,0.0000,0.0000,0.0011,0.0114,true,false,,
+country,Latvia,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Lebanon,31,28,6,0.2143,0.7495,0.0037,0.0114,true,false,,
+country,Liechtenstein,1,1,1,1.0000,3.4977,0.0001,0.0114,true,false,,
+country,Lithuania,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Luxembourg,12,12,2,0.1667,0.5829,0.0016,0.0114,true,false,,
+country,Malawi,1,1,1,1.0000,3.4977,0.0001,0.0114,true,false,,
+country,Malaysia,26,22,0,0.0000,0.0000,0.0029,0.0114,true,false,,
+country,Malta,3,3,1,0.3333,1.1659,0.0004,0.0114,true,false,,
+country,Mauritius,2,2,0,0.0000,0.0000,0.0003,0.0114,true,false,,
+country,Mongolia,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Montenegro,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Morocco,6,5,1,0.2000,0.6995,0.0007,0.0114,true,false,,
+country,Mozambique,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Namibia,2,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Nepal,2,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Nicaragua,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Norway,30,26,13,0.5000,1.7488,0.0035,0.0114,true,false,,
+country,Pakistan,24,21,8,0.3810,1.3324,0.0028,0.0114,true,false,,
+country,Palestine,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Panama,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Paraguay,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Peru,10,8,1,0.1250,0.4372,0.0011,0.0114,true,false,,
+country,Portugal,6,6,1,0.1667,0.5829,0.0008,0.0114,true,false,,
+country,Puerto Rico,1,1,1,1.0000,3.4977,0.0001,0.0114,true,false,,
+country,Qatar,10,9,3,0.3333,1.1659,0.0012,0.0114,true,false,,
+country,Romania,14,14,5,0.3571,1.2492,0.0019,0.0114,true,false,,
+country,Russia,27,26,7,0.2692,0.9417,0.0035,0.0114,true,false,,
+country,Samoa,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Saudi Arabia,13,11,2,0.1818,0.6359,0.0015,0.0114,true,false,,
+country,Senegal,3,3,0,0.0000,0.0000,0.0004,0.0114,true,false,,
+country,Serbia,7,6,1,0.1667,0.5829,0.0008,0.0114,true,false,,
+country,Slovakia,1,0,0,,,0.0000,0.0114,true,false,,
+country,Slovenia,3,2,1,0.5000,1.7488,0.0003,0.0114,true,false,,
+country,Somalia,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Soviet Union,3,2,0,0.0000,0.0000,0.0003,0.0114,true,false,,
+country,Sri Lanka,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Sudan,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Switzerland,19,19,5,0.2632,0.9204,0.0025,0.0114,true,false,,
+country,Syria,3,2,0,0.0000,0.0000,0.0003,0.0114,true,false,,
+country,Uganda,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Ukraine,3,2,2,1.0000,3.4977,0.0003,0.0114,true,false,,
+country,Unknown,831,459,94,0.2048,0.7163,0.0613,0.0114,false,true,,
+country,Uruguay,14,14,3,0.2143,0.7495,0.0019,0.0114,true,false,,
+country,Vatican City,1,1,0,0.0000,0.0000,0.0001,0.0114,true,false,,
+country,Venezuela,4,4,1,0.2500,0.8744,0.0005,0.0114,true,false,,
+country,Vietnam,7,7,0,0.0000,0.0000,0.0009,0.0114,true,false,,
+country,West Germany,5,5,4,0.8000,2.7981,0.0007,0.0114,true,false,,
+country,Zimbabwe,3,3,0,0.0000,0.0000,0.0004,0.0114,true,false,,
+genre,Classic Movies,116,106,79,0.7453,2.6068,0.0141,0.0303,false,false,1,Scale-up candidate
+genre,Anime Series,176,145,99,0.6828,2.3881,0.0194,0.0303,false,false,2,Scale-up candidate
+genre,TV Action & Adventure,168,149,87,0.5839,2.0423,0.0199,0.0303,false,false,3,Scale-up candidate
+genre,Teen TV Shows,69,67,38,0.5672,1.9838,0.0089,0.0303,false,false,4,Scale-up candidate
+genre,TV Mysteries,98,94,53,0.5638,1.9721,0.0125,0.0303,false,false,5,Scale-up candidate
+genre,TV Thrillers,57,50,28,0.5600,1.9587,0.0067,0.0303,false,false,6,Scale-up candidate
+genre,Crime TV Shows,470,419,232,0.5537,1.9367,0.0559,0.0303,false,false,7,Core strength
+genre,TV Sci-Fi & Fantasy,84,77,42,0.5455,1.9078,0.0103,0.0303,false,false,8,Scale-up candidate
+genre,TV Dramas,763,643,342,0.5319,1.8603,0.0858,0.0303,false,false,9,Core strength
+genre,Korean TV Shows,151,126,62,0.4921,1.7211,0.0168,0.0303,false,false,10,Scale-up candidate
+genre,Cult Movies,71,62,30,0.4839,1.6924,0.0083,0.0303,false,false,11,Scale-up candidate
+genre,Anime Features,71,50,24,0.4800,1.6789,0.0067,0.0303,false,false,12,Scale-up candidate
+genre,Docuseries,395,332,156,0.4699,1.6435,0.0443,0.0303,false,false,13,Core strength
+genre,TV Horror,75,68,31,0.4559,1.5945,0.0091,0.0303,false,false,14,Scale-up candidate
+genre,British TV Shows,253,220,99,0.4500,1.5739,0.0294,0.0303,false,false,15,Scale-up candidate
+genre,TV Comedies,581,507,227,0.4477,1.5660,0.0677,0.0303,false,false,16,Core strength
+genre,Romantic TV Shows,370,302,130,0.4305,1.5056,0.0403,0.0303,false,false,17,Core strength
+genre,International TV Shows,1351,1119,472,0.4218,1.4753,0.1494,0.0303,false,false,18,Core strength
+genre,Science & Nature TV,92,80,31,0.3875,1.3553,0.0107,0.0303,false,false,19,Scale-up candidate
+genre,Stand-Up Comedy,343,300,113,0.3767,1.3175,0.0400,0.0303,false,false,20,Core strength
+genre,Spanish-Language TV Shows,174,145,54,0.3724,1.3026,0.0194,0.0303,false,false,21,Scale-up candidate
+genre,Documentaries,869,668,219,0.3278,1.1467,0.0892,0.0303,false,false,22,Core strength
+genre,Stand-Up Comedy & Talk Shows,56,40,13,0.3250,1.1367,0.0053,0.0303,false,false,23,Scale-up candidate
+genre,Dramas,2427,2202,574,0.2607,0.9117,0.2939,0.0303,false,false,24,Average
+genre,Reality TV,255,227,59,0.2599,0.9091,0.0303,0.0303,false,false,25,Average
+genre,Music & Musicals,375,305,78,0.2557,0.8945,0.0407,0.0303,false,false,26,Volume without quality
+genre,Sports Movies,219,188,47,0.2500,0.8744,0.0251,0.0303,false,false,27,Weak and small
+genre,Independent Movies,756,704,166,0.2358,0.8247,0.0940,0.0303,false,false,28,Volume without quality
+genre,International Movies,2752,2368,470,0.1985,0.6942,0.3161,0.0303,false,false,29,Volume without quality
+genre,LGBTQ Movies,102,92,18,0.1957,0.6843,0.0123,0.0303,false,false,30,Weak and small
+genre,Action & Adventure,859,760,142,0.1868,0.6535,0.1014,0.0303,false,false,31,Volume without quality
+genre,Kids' TV,451,381,69,0.1811,0.6334,0.0509,0.0303,false,false,32,Volume without quality
+genre,Sci-Fi & Fantasy,243,209,37,0.1770,0.6192,0.0279,0.0303,false,false,33,Weak and small
+genre,Comedies,1674,1464,237,0.1619,0.5662,0.1954,0.0303,false,false,34,Volume without quality
+genre,Thrillers,577,537,83,0.1546,0.5406,0.0717,0.0303,false,false,35,Volume without quality
+genre,Romantic Movies,616,576,85,0.1476,0.5161,0.0769,0.0303,false,false,36,Volume without quality
+genre,Children & Family Movies,641,433,61,0.1409,0.4927,0.0578,0.0303,false,false,37,Volume without quality
+genre,Faith & Spirituality,65,56,5,0.0893,0.3123,0.0075,0.0303,false,false,38,Weak and small
+genre,Horror Movies,357,317,20,0.0631,0.2207,0.0423,0.0303,false,false,39,Volume without quality
+genre,Classic & Cult TV,28,25,21,0.8400,2.9380,0.0033,0.0303,true,false,,
+genre,Movies,57,20,7,0.3500,1.2242,0.0027,0.0303,true,false,,
+genre,TV Shows,16,2,0,0.0000,0.0000,0.0003,0.0303,true,false,,
+rating_group,Not Rated / Unknown,90,75,25,0.3333,1.1659,0.0100,0.2553,false,false,1,Scale-up candidate
+rating_group,Adult,4009,3592,1109,0.3087,1.0799,0.4794,0.2553,false,false,2,Average
+rating_group,Teen/Family,3800,3205,904,0.2821,0.9865,0.4278,0.2553,false,false,3,Average
+rating_group,Kids,908,620,104,0.1677,0.5867,0.0828,0.2553,false,false,4,Weak and small

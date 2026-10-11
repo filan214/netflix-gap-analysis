@@ -1,6 +1,6 @@
 # PRD — Netflix Catalog Gap Analysis (Global + Indonesia)
 
-> Scope and rationale. `IMPLEMENTATION_GUIDE.md` is the *how*. Phases 0-3 are done. Phase 4 is built with Claude Code. Phase 5 (Power BI) and Phase 6 (memo) are done by hand.
+> Scope and rationale. `IMPLEMENTATION_GUIDE.md` is the *how*. Phases 0-4 are done. Phase 5 (Power BI) and Phase 6 (memo) are done by hand.
 
 ## 1. Purpose
 Data Analyst portfolio project. It shows: messy-data cleaning, SQL modeling, a join without a shared key, metrics defined up front with stated limits, a dashboard, and a recommendation memo. Secondary fit: general IT / data-engineering basics.
@@ -16,7 +16,7 @@ Where does Netflix's catalog deliver audience-rated quality, where is it thin co
 | 1 | Clean Netflix, build bridge tables | Done | Manual |
 | 2 | Model in PostgreSQL, load both sources | Done | Claude Code |
 | 3 | Match Netflix to IMDb, audit the match | Done (T1 + T2; T3 not built) | Claude Code + manual audit |
-| 4 | Analysis marts in SQL | | Claude Code |
+| 4 | Analysis marts in SQL | Done | Claude Code |
 | 5 | Power BI dashboard (3 pages) | | Manual |
 | 6 | 1-page findings memo | | Manual |
 
@@ -94,3 +94,9 @@ No shared ID exists, so titles are matched by normalized name + year + type, in 
 | 2026-10-08 | Match report also shows match rate by `year_added` and an unmatched near-miss count (same name and type in IMDb, year outside the T2 window) | Extra diagnostics for the T3 decision. Neither changes a rule |
 | 2026-10-08 | Phase 3 audit is AI-assisted with a human-checked subset. Claude pre-labels all 60 sampled matches (`ai_label` y / n / unsure + `ai_evidence`) from runtime agreement, genre overlap and model knowledge; IMDb pages returned HTTP 403, so no director/cast check. The human checks every `n` / `unsure` row plus 10 random `y` rows, and answers go in `correct`. Precision may count blank `correct` rows as their AI label (`summary --use-ai-for-blank`), with human vs AI label counts reported and `unsure` rows excluded | Cuts the manual pass while keeping a human check where the AI is unsure and a spot-check of its `y` labels. Section 6 says matches are "checked by hand"; this replaces a full hand check of all 60 rows. AI pre-labels (before human review): exact 30 y; year_pm1 28 y, 2 unsure, 0 n |
 | 2026-10-08 | Phase 3 audit result: `exact` 100.0% (30/30; 7 human, 23 AI labels), `year_pm1` 96.7% (29/30; 5 human, 25 AI). Both tiers stay in `mart.params.accepted_tiers` (`{exact,year_pm1}`), no change. The AI agreed with the human on 10/10 spot-checked `y` rows; its 2 `unsure` rows resolved to 1 y, 1 n | Recorded in `docs/match_report.md`. A known `exact` false positive outside the sample (s3857 *What If?* -> tt8860450) shows that precision is below 100% in practice |
+| 2026-10-11 | T3 `fuzzy` will not be built (final). Analysis tiers stay `{exact,year_pm1}` | T1+T2 reach 85.1%, above the 85% trigger in section 6. Only 149 of 1,315 unmatched titles have a same-name, same-type IMDb title, and most of those are 3+ years off. The 30 sampled unmatched titles are mostly specials, compilations and local titles absent from IMDb |
+| 2026-10-11 | Country **Unknown** is kept in `mart.quality_index` but flagged `not_ranked`. It is left out of rankings and of the median share used for quadrant labels, and gets no quadrant | It matches at 55.2% vs 82-92% for named countries, so its matched titles are not representative |
+| 2026-10-11 | Fourth sensitivity scenario: baseline thresholds (7.0 / 1,000) with the 283 ambiguous matches excluded (population 7,209). Result: top 5 kept 4/5, bottom 5 kept 5/5 | Tests whether tie-broken matches drive the genre ranking |
+| 2026-10-11 | Indonesia tables use the 79 matched titles as n (11 of 90 not matched, shown in `mart.catalog_summary.indonesia_unmatched`). `mart.growth_by_year_added` also counts matched titles only, for global and Indonesia alike | Section 5 makes matched titles the analysis population. One base n for Indonesia keeps the dashboard consistent |
+| 2026-10-11 | Clarifications of section 5: `share_of_catalog` = segment's share of matched titles. Median share is computed per dimension over ranked segments only. `small_n` segments get neither a rank nor a quadrant. Coverage-gap `small_n` uses all matched titles with the IMDb genre in the type group. The gap is NULL when Netflix has no high-rated title in the genre (3 movie rows, all small_n). The sensitivity baseline reads `mart.params` | Section 5 did not pin these down |
+| 2026-10-11 | Finding, no rule change: some low country indices come from the vote threshold, not the ratings. Nigeria: 0 of 91 high-rated, but only 7 have 1,000+ votes (median 112). Indonesia's median is 780 votes vs 2,925 overall | Added to the README Limitations. It bears on limitation 1 (votes are a popularity proxy) |
