@@ -74,8 +74,9 @@ Current result: 7,492 of 8,807 titles matched (85.1%). Movies 85.1%, TV shows 84
   - Country **Unknown** is kept but flagged `not_ranked`. It matches at 55.2% against 82–92% for named countries, so its matched titles are not representative. It is left out of rankings and of the median share.
   - Quadrant labels use the median share of ranked segments within each dimension.
 - **Coverage gap** (`coverage_gap_genre`; IMDb genres, movie and series groups): the genre's share of the world's high-rated titles ÷ its share of Netflix's high-rated titles. "World" means IMDb titles from 2000 on. Above 1 = Netflix is thin in that genre. The ratio is empty when Netflix has no high-rated title in the genre.
-- **Votes context** (`country_votes_context`): for each country with 30+ matched titles (Unknown included, flagged `not_ranked`), it lists the median votes, the share of titles with 1,000+ votes, `pct_rated_at_or_above_min_rating` (rating >= 7.0 with no vote condition), `visibility_penalty`, and the Quality index copied from `quality_index`. `visibility_penalty` = `pct_rated_at_or_above_min_rating` - `high_rate`: the share of titles rated high enough that miss only the vote threshold. A high penalty means a low index reflects low IMDb visibility, not low ratings. It is 9.4% for the whole matched catalog.
-- **Indonesia** (`indonesia_vs_global`, `growth_by_year_added`): descriptive counts and percentages only. The base n is the **79 matched** Indonesian titles; the other 11 of the 90 could not be matched to IMDb (`catalog_summary.indonesia_unmatched`).
+- **Votes context** (`country_votes_context`): for each country with 30+ matched titles (Unknown included, flagged `not_ranked`), it lists the median votes, the share of titles with 1,000+ votes, `pct_rated_at_or_above_min_rating` (rating >= 7.0 with no vote condition), `visibility_penalty`, the country's match rate (`matched_titles` / `total_titles`; Unknown 55.2%), and the Quality index copied from `quality_index`. `visibility_penalty` = `pct_rated_at_or_above_min_rating` - `high_rate`: the share of titles rated high enough that miss only the vote threshold. A high penalty means a low index reflects low IMDb visibility, not low ratings. It is 9.4% for the whole matched catalog.
+- **Indonesia** (`indonesia_vs_global`): descriptive counts and percentages only. The base n is the **79 matched** Indonesian titles; the other 11 of the 90 could not be matched to IMDb (`catalog_summary.indonesia_unmatched`).
+- **Growth** (`growth_by_year_added`): titles added per year and type from the **full catalog** (8,797 of 8,807; 10 have no date added), since growth does not depend on IMDb. `matched_titles` sits next to `total_titles`, and the Indonesia columns (90 total, 79 matched) feed the Indonesia page.
 - **Sensitivity** (`sensitivity_genre`): the genre Quality index is rerun with the same SQL function (`mart.qi_counts`) in 4 scenarios: baseline 7.0 / 1,000, lenient 6.5 / 500, strict 7.5 / 5,000, and baseline without the 283 ambiguous matches. Stability = how many of the baseline's top 5 and bottom 5 genres stay there.
 - **Checks** (the build rolls back if any fails):
   - accepted tiers only
@@ -88,6 +89,8 @@ Current result: 7,492 of 8,807 titles matched (85.1%). Movies 85.1%, TV shows 84
   - Indonesia base n = matched Indonesian titles
   - `country_votes_context` covers every country with n >= 30, its index equals `quality_index`, and a hand-written recount of Nigeria matches
   - `visibility_penalty` is never negative and equals the rated share minus `high_rate`
+  - country `match_rate` = `matched_titles` / `total_titles`, with a hand-written recount of Unknown (459 / 831)
+  - `growth_by_year_added` totals equal a hand count of the full catalog (8,797 dated + 10 undated = 8,807; Indonesia 90 / 79 matched)
 
 ## Results
 

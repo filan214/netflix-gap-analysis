@@ -173,7 +173,8 @@ All marts read thresholds from `mart.params`, use accepted tiers only, and are b
 | `mart.catalog_summary` | one row | titles, matched, match_rate, high_rated_n, overall_high_rate |
 | `mart.quality_index` | dimension (`genre`, `country`, `rating_group`) x segment | n_matched, n_high, high_rate, quality_index, share_of_catalog, small_n, quadrant |
 | `mart.coverage_gap_genre` | IMDb genre x type group (movie / series) | netflix_high_n, netflix_high_share, world_high_n, world_high_share, coverage_gap, n_matched, small_n |
-| `mart.growth_by_year_added` | year_added x type | titles_global, titles_indonesia (null `year_added` excluded) |
+| `mart.country_votes_context` | country (n_matched >= `min_n`, Unknown included) | n_matched, matched_titles, total_titles, match_rate, median_votes, pct_titles_over_1000_votes, pct_rated_at_or_above_min_rating, visibility_penalty, quality_index |
+| `mart.growth_by_year_added` | year_added x type | total_titles, matched_titles, indonesia_total_titles, indonesia_matched_titles. Full catalog, matched or not (null `year_added` excluded) |
 | `mart.indonesia_vs_global` | dimension (`genre`, `rating_group`) x segment | indonesia_n, indonesia_pct, global_n, global_pct |
 | `mart.sensitivity_genre` | scenario x genre | quality_index, rank |
 

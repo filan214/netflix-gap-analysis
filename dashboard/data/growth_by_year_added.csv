@@ -1,22 +1,25 @@
-year_added,type,titles_global,titles_indonesia
-2009,Movie,1,0
-2011,Movie,9,0
-2012,Movie,2,0
-2013,Movie,5,0
-2013,TV Show,3,0
-2014,Movie,13,0
-2014,TV Show,5,0
-2015,Movie,47,0
-2015,TV Show,20,0
-2016,Movie,203,1
-2016,TV Show,145,0
-2017,Movie,709,1
-2017,TV Show,265,0
-2018,Movie,1045,21
-2018,TV Show,322,1
-2019,Movie,1237,16
-2019,TV Show,511,0
-2020,Movie,1127,25
-2020,TV Show,533,1
-2021,Movie,821,12
-2021,TV Show,460,1
+year_added,type,total_titles,matched_titles,indonesia_total_titles,indonesia_matched_titles
+2008,Movie,1,0,0,0
+2008,TV Show,1,0,0,0
+2009,Movie,2,1,0,0
+2010,Movie,1,0,0,0
+2011,Movie,13,9,0,0
+2012,Movie,3,2,0,0
+2013,Movie,6,5,0,0
+2013,TV Show,5,3,0,0
+2014,Movie,19,13,0,0
+2014,TV Show,5,5,0,0
+2015,Movie,56,47,0,0
+2015,TV Show,26,20,0,0
+2016,Movie,253,203,1,1
+2016,TV Show,176,145,0,0
+2017,Movie,839,709,1,1
+2017,TV Show,349,265,1,0
+2018,Movie,1237,1045,27,21
+2018,TV Show,412,322,1,1
+2019,Movie,1424,1237,18,16
+2019,TV Show,592,511,0,0
+2020,Movie,1284,1127,27,25
+2020,TV Show,595,533,1,1
+2021,Movie,993,821,12,12
+2021,TV Show,505,460,1,1

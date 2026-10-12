@@ -1,8 +1,9 @@
 -- Phase 4 analysis marts (IMPLEMENTATION_GUIDE section 6, definitions in PRD section 5).
 -- Run by scripts/04_build_marts.py in one transaction, followed by sql/04_sensitivity.sql.
--- Thresholds come from mart.params. Every mart is built on the analysis population:
+-- Thresholds come from mart.params. Every rating-based mart is built on the analysis population:
 -- Netflix titles matched by a tier in mart.params.accepted_tiers. Unmatched titles are
--- counted in mart.catalog_summary and as n_titles in mart.quality_index.
+-- counted in mart.catalog_summary, as n_titles in mart.quality_index, as total_titles in
+-- mart.country_votes_context, and in mart.growth_by_year_added, which counts the full catalog.
 
 DROP TABLE IF EXISTS mart.catalog_summary, mart.quality_index, mart.country_votes_context, mart.coverage_gap_genre,
                      mart.growth_by_year_added, mart.indonesia_vs_global, mart.sensitivity_genre;
@@ -136,6 +137,9 @@ t AS (
 )
 SELECT t.country,
        count(*)                                                          AS n_matched,
+       q.n_matched                                                       AS matched_titles,
+       q.n_titles                                                        AS total_titles,
+       round(q.n_matched::numeric / q.n_titles, 4)                       AS match_rate,
        percentile_cont(0.5) WITHIN GROUP (ORDER BY t.num_votes)          AS median_votes,
        round(avg((t.num_votes >= p.min_votes)::int), 4)                  AS pct_titles_over_1000_votes,
        round(avg((t.avg_rating >= p.min_rating)::int), 4)                AS pct_rated_at_or_above_min_rating,
@@ -143,7 +147,7 @@ SELECT t.country,
        q.quality_index, q.qi_rank, q.not_ranked
 FROM t CROSS JOIN p
 JOIN mart.quality_index q ON q.dimension = 'country' AND q.segment = t.country
-GROUP BY t.country, p.min_n, q.high_rate, q.quality_index, q.qi_rank, q.not_ranked
+GROUP BY t.country, p.min_n, q.n_matched, q.n_titles, q.high_rate, q.quality_index, q.qi_rank, q.not_ranked
 HAVING count(*) >= p.min_n
 ORDER BY t.country;
 
@@ -151,6 +155,8 @@ COMMENT ON TABLE mart.country_votes_context IS
     'Per country with >= min_n matched titles: IMDb visibility (votes) vs ratings, next to the Quality index. Supports the limitations page.';
 COMMENT ON COLUMN mart.country_votes_context.pct_titles_over_1000_votes IS
     'Share of matched titles with num_votes >= mart.params.min_votes (1,000 by default).';
+COMMENT ON COLUMN mart.country_votes_context.match_rate IS
+    'matched_titles / total_titles: share of the country''s Netflix titles matched in accepted tiers. matched_titles = n_matched.';
 COMMENT ON COLUMN mart.country_votes_context.visibility_penalty IS
     'pct_rated_at_or_above_min_rating - quality_index.high_rate: share of titles that clear the rating threshold but not the vote threshold.';
 
@@ -232,20 +238,28 @@ FROM calc
 ORDER BY type_group, genre;
 
 -- ------------------------------------------------------------------ growth_by_year_added
--- Matched titles only (analysis population), so Indonesia n = its matched titles.
+-- Growth is a catalog fact, so this mart counts the full Netflix catalog, matched or not.
+-- matched_titles (accepted tiers) sits next to each total for comparison.
 CREATE TABLE mart.growth_by_year_added AS
-SELECT a.year_added, a.type,
-       count(DISTINCT a.show_id) AS titles_global,
-       count(DISTINCT a.show_id) FILTER (WHERE EXISTS (
-           SELECT 1 FROM netflix.title_country tc
-           WHERE tc.show_id = a.show_id AND tc.country = 'Indonesia')) AS titles_indonesia
-FROM mart.analysis_titles a
-WHERE a.year_added IS NOT NULL
-GROUP BY a.year_added, a.type
-ORDER BY a.year_added, a.type;
+WITH t AS (
+    SELECT n.show_id, n.year_added, n.type,
+           a.show_id IS NOT NULL AS is_matched,
+           EXISTS (SELECT 1 FROM netflix.title_country tc
+                   WHERE tc.show_id = n.show_id AND tc.country = 'Indonesia') AS is_indonesia
+    FROM netflix.titles n LEFT JOIN mart.analysis_titles a USING (show_id)
+    WHERE n.year_added IS NOT NULL
+)
+SELECT year_added, type,
+       count(*)                                           AS total_titles,
+       count(*) FILTER (WHERE is_matched)                 AS matched_titles,
+       count(*) FILTER (WHERE is_indonesia)               AS indonesia_total_titles,
+       count(*) FILTER (WHERE is_indonesia AND is_matched) AS indonesia_matched_titles
+FROM t
+GROUP BY year_added, type
+ORDER BY year_added, type;
 
 COMMENT ON TABLE mart.growth_by_year_added IS
-    'Matched titles (accepted tiers) by year added. Titles with no date_added are excluded.';
+    'Full Netflix catalog by year added and type, matched or not; matched_titles counts accepted tiers. Titles with no date_added are excluded.';
 
 -- ------------------------------------------------------------------ indonesia_vs_global
 -- Descriptive only (PRD section 5): counts and percentages, no index. Both sides are

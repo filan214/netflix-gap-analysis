@@ -134,6 +134,33 @@ def run_checks(cur):
         JOIN mart.quality_index q ON q.dimension = 'country' AND q.segment = c.country""")
     checks.append((f"visibility_penalty never negative (negative rows: {negative}) and = rated share - high_rate "
                    f"(differences: {pen_diff})", negative == 0 and pen_diff == 0))
+    rate_diff = one(cur, """SELECT count(*) FROM mart.country_votes_context
+                            WHERE matched_titles <> n_matched OR match_rate <> round(matched_titles::numeric / total_titles, 4)""")[0]
+    hand = one(cur, """
+        SELECT count(DISTINCT tc.show_id), count(DISTINCT tc.show_id) FILTER (WHERE m.match_tier = ANY (%s))
+        FROM netflix.title_country tc JOIN netflix.title_match m USING (show_id)
+        WHERE tc.country = 'Unknown'""", (p["tiers"],))
+    mart_row = one(cur, """SELECT total_titles, matched_titles, match_rate::float
+                           FROM mart.country_votes_context WHERE country = 'Unknown'""")
+    hand_rate = round(hand[1] / hand[0], 4)
+    checks.append((f"country match_rate = matched_titles / total_titles (differences: {rate_diff}); hand recount Unknown "
+                   f"total/matched/rate {hand[0]}/{hand[1]}/{hand_rate} vs mart {mart_row[0]}/{mart_row[1]}/{mart_row[2]}",
+                   rate_diff == 0 and (*hand, hand_rate) == tuple(mart_row)))
+
+    # growth_by_year_added counts the full catalog (matched or not), with matched titles alongside.
+    g = one(cur, """SELECT sum(total_titles)::int, sum(matched_titles)::int, sum(indonesia_total_titles)::int, sum(indonesia_matched_titles)::int
+                    FROM mart.growth_by_year_added""")
+    hand = one(cur, """
+        SELECT count(*), count(*) FILTER (WHERE m.match_tier = ANY (%(t)s)),
+               count(*) FILTER (WHERE i.show_id IS NOT NULL),
+               count(*) FILTER (WHERE i.show_id IS NOT NULL AND m.match_tier = ANY (%(t)s))
+        FROM netflix.titles n JOIN netflix.title_match m USING (show_id)
+        LEFT JOIN (SELECT DISTINCT show_id FROM netflix.title_country WHERE country = 'Indonesia') i USING (show_id)
+        WHERE n.year_added IS NOT NULL""", {"t": p["tiers"]})
+    no_date = one(cur, "SELECT count(*) FROM netflix.titles WHERE year_added IS NULL")[0]
+    checks.append((f"growth_by_year_added = full catalog with a date: total/matched/Indonesia total/Indonesia matched "
+                   f"{tuple(g)} vs hand {tuple(hand)}; total + {no_date} undated = {g[0] + no_date:,} of {summary['titles']:,}",
+                   tuple(g) == tuple(hand) and g[0] + no_date == summary["titles"]))
 
     indo_base = one(cur, "SELECT DISTINCT indonesia_base_n FROM mart.indonesia_vs_global")[0]
     checks.append((f"Indonesia base n = matched Indonesian titles ({indo_base} of {summary['indo_titles']}, "
