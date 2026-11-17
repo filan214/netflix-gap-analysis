@@ -19,6 +19,7 @@ Where does Netflix's catalog deliver audience-rated quality, where is it thin co
 2. **Load** both into PostgreSQL (`scripts/02_load_postgres.py`).
 3. **Match** Netflix to IMDb on normalized title + year + type, in two tiers: exact year, then ±1 year (`scripts/03_run_match.py`). Ties go to the IMDb title with the most votes. A sample of 60 matches was audited; results are in `docs/match_report.md`.
 4. **Analyse** in SQL (`scripts/04_build_marts.py`), then export aggregate tables to `dashboard/data/` for Power BI.
+5. **Bundle** those CSVs into one workbook, `dashboard/data/netflix_gap_marts.xlsx`, one sheet per table (`scripts/05_export_xlsx.py`). It reads the CSVs only and checks the workbook against them.
 
 **Definitions**
 - **High-rated:** IMDb rating ≥ 7.0 with ≥ 1,000 votes.
@@ -46,7 +47,9 @@ Requires Python 3.13 and PostgreSQL 14+. Run from the repo root in PowerShell.
 3. Put the raw files in `data/raw/`: `netflix_titles.csv` from [Kaggle](https://www.kaggle.com/datasets/shivamb/netflix-shows), plus `title.basics.tsv` and `title.ratings.tsv` from [IMDb datasets](https://datasets.imdbws.com/). Then run `notebooks/02_clean.ipynb`.
 4. Run the pipeline:
    ```powershell
-   python scripts/01_filter_imdb.py; python scripts/02_load_postgres.py; python scripts/03_run_match.py; python scripts/04_build_marts.py
+   python scripts/01_filter_imdb.py; python scripts/02_load_postgres.py; python scripts/03_run_match.py; python scripts/04_build_marts.py; python scripts/05_export_xlsx.py
    ```
 
 IMDb data is licensed for non-commercial use, so nothing under `data/` is committed. Only aggregate tables go to `dashboard/data/`.
+
+`dashboard/data/netflix_gap_marts.xlsx` is a derived artifact built by `scripts/05_export_xlsx.py` from those CSVs, for the dashboard tool. Rebuild it rather than editing it by hand.
