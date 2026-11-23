@@ -1,3 +1,6 @@
+# TODO: this script still writes the old technical column names (e.g. visibility_penalty),
+# so it does not recreate dashboard/data/netflix_gap_marts_plain.xlsx, the readable-name
+# workbook that dashboard/tableau/build_tableau.py reads. Add the column renaming here.
 """Bundle the dashboard CSVs into one Excel workbook for the dashboard tool.
 
     python scripts/05_export_xlsx.py

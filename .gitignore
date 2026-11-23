@@ -5,3 +5,6 @@ __pycache__/
 .env
 .pytest_cache/
 docs/match_audit_sample.csv
+~*.twbr
+*.twbr
+dashboard/data/dashboard.pbix

@@ -1,9 +1,8 @@
 # Netflix Catalog vs IMDb Ratings
 
-Where does Netflix's catalog deliver titles audiences rate highly, where is it thin compared with the world, and how does Indonesian content compare? I matched Netflix's 2021 catalog to IMDb (Internet Movie Database) ratings and built an Excel dashboard to answer these questions.
+Where does Netflix's catalog deliver titles audiences rate highly, where is it thin compared with the world, and how does Indonesian content compare? I matched Netflix's 2021 catalog to IMDb (Internet Movie Database) ratings and built a Tableau dashboard to answer these questions.
 
-![Global view: Quality Score by genre, a share-versus-score scatter, and the movie Gap Score chart](images/01_overview_global.png)
-*Global view: Quality Score by genre, genre share against score, and the Gap Score against the world.*
+**[View the interactive dashboard on Tableau Public](https://public.tableau.com/app/profile/valentinus.gunawan/viz/NetflixsHiddenGemsWhatOneRatingRuleHidesintheCatalog/Netflixcatalogquality)**
 
 ## Situation
 
@@ -23,34 +22,16 @@ Answer three business questions:
 - **Audited match precision** on a sample of 60 matches, with AI (artificial intelligence) labelling and 12 rows checked by hand: exact-year matches 100.0% correct (30 of 30), year-off-by-one matches 96.7% (29 of 30).
 - **Defined "highly rated"** as IMDb 7.0 or higher with at least 1,000 votes: 2,142 titles, 28.6% of matched titles. **Quality Score** = a group's share of highly rated titles divided by the whole catalog's share, so 1.0 is the catalog average. Groups with fewer than 30 matched titles are not ranked.
 - **Tested the genre ranking** under 4 scenarios: Standard (7.0 rating, 1,000 votes), Lenient (6.5, 500), Strict (7.5, 5,000), and Standard with uncertain matches removed.
-- **Built 7 summary tables** with SQL (Structured Query Language) in PostgreSQL, run from Python. Then built an Excel dashboard with 3 pages (Global, Indonesia, Data Limits). Its charts are fed by dynamic-array formulas (FILTER, XLOOKUP, UNIQUE), the gap chart has a Movie / TV (television) Series dropdown, and check cells confirm the key numbers.
+- **Built 7 summary tables** with SQL (Structured Query Language) in PostgreSQL, run from Python.
+- **Built a one-page Tableau dashboard** with six views: a world map of well-rated titles hidden by low vote counts, genre rank stability across the 4 scenarios, the Netflix-versus-world gap by genre (with a Movie / TV (television) Series filter), Indonesian genres next to the whole catalog, and titles added by year for Netflix and for Indonesia. A Python script generates the workbook.
 
 ## Result
 
-### 15 genres are small but rated well above average
-
-![Scatter of genres by share of catalog and Quality Score, with scale-up candidates highlighted](images/02_scatter_scale_up_candidates.png)
-*15 scale-up candidates: genres that score at least 1.1 (10% above the catalog average) but each hold less than the typical 3.0% share of the catalog.*
-
-### Netflix is thinnest on War and Thriller movies
-
-![Bar chart of Gap Score by movie genre, highest first](images/03_gap_vs_world_movies.png)
-*For movies, the biggest gaps against the world are War (1.50) and Thriller (1.31). A Gap Score above 1 means the genre makes up a smaller share of Netflix's highly rated movies than of the world's (IMDb titles from 2000 on).*
-
-### The top of the genre ranking is unstable, the bottom is not
-
-![Table of genre ranks under four scenarios, top 5 and bottom 5](images/04_robustness_top5_bottom5.png)
-*The top 5 changes under every alternative scenario, while four of the bottom five stay in the bottom five under all four. So the project makes no "top 5 genres" claim.*
-
-### Low vote counts hide well-rated titles in some countries
-
-![Bar chart of the share of each country's titles rated 7+ but with too few votes to count](images/05_hidden_by_low_votes.png)
-*In Taiwan, 48.1% of matched titles are rated 7 or higher on IMDb but have fewer than 1,000 votes, so they do not count as highly rated.*
-
-### Indonesian titles lean Teen/Family and arrived mostly in 2018-2020
-
-![Indonesia page: age rating mix against all of Netflix, and Indonesian titles added by year](images/06_indonesia_age_and_growth.png)
-*79 of 90 Indonesian titles matched. 64.6% are rated Teen/Family, against 42.8% across Netflix, and 74 of the 90 were added in 2018-2020. Descriptive only: Indonesia gets no scores or ranks.*
+- **15 genres are small but rated well above average.** These scale-up candidates score at least 1.1 (10% above the catalog average) but each hold less than the typical 3.0% share of the catalog.
+- **Netflix is thinnest on War and Thriller movies.** For movies, the biggest gaps against the world are War (1.50) and Thriller (1.31). A Gap Score above 1 means the genre makes up a smaller share of Netflix's highly rated movies than of the world's (IMDb titles from 2000 on).
+- **The top of the genre ranking is unstable, the bottom is not.** The top 5 changes under every alternative scenario, while four of the bottom five stay in the bottom five under all four. So the project makes no "top 5 genres" claim.
+- **Low vote counts hide well-rated titles in some countries.** In Taiwan, 48.1% of matched titles are rated 7 or higher on IMDb but have fewer than 1,000 votes, so they do not count as highly rated.
+- **Indonesian titles lean Teen/Family and arrived mostly in 2018-2020.** 79 of 90 Indonesian titles matched. 64.6% are rated Teen/Family, against 42.8% across Netflix, and 74 of the 90 were added in 2018-2020. Descriptive only: Indonesia gets no scores or ranks.
 
 ## Data limits
 
@@ -63,10 +44,10 @@ Answer three business questions:
 ## Repo structure
 
 ```
-excel/              netflix_gap_marts_plain.xlsx: the dashboard workbook
-images/             dashboard images used in this README
+dashboard/tableau/  netflix_dashboard.twbx (the dashboard), build_tableau.py
+                    (generates it), netflix_map.twbx (map template it reads)
 dashboard/data/     the 7 summary tables as CSV (comma-separated values) files,
-                    plus netflix_gap_marts.xlsx built from them
+                    netflix_gap_marts.xlsx and netflix_gap_marts_plain.xlsx
 notebooks/          profiling and cleaning of the Netflix data
 scripts/            Python pipeline, run in order 01 to 05
 sql/                schema, matching and summary-table queries
@@ -74,11 +55,11 @@ docs/               match report and audit sample
 tests/              tests for title normalization
 ```
 
-`dashboard/data/netflix_gap_marts.xlsx` is the pipeline output: the 7 summary tables, built from the raw data by `scripts/01` to `05`. `excel/netflix_gap_marts_plain.xlsx` is the Excel dashboard, built on the same tables.
+`dashboard/data/netflix_gap_marts.xlsx` is the pipeline output: the 7 summary tables, built from the raw data by `scripts/01` to `05`. `dashboard/data/netflix_gap_marts_plain.xlsx` holds the same tables with readable column names and is the input to `build_tableau.py`.
 
 ## How to open
 
-Open `excel/netflix_gap_marts_plain.xlsx` in Excel for Microsoft 365 or Excel 2024. Older versions lack the dynamic-array functions the dashboard uses and show `#NAME?`. The dashboard is on sheets 1 Global, 2 Indonesia and 3 Data Limits. The 7 data sheets come after them.
+Open the [dashboard on Tableau Public](https://public.tableau.com/app/profile/valentinus.gunawan/viz/NetflixsHiddenGemsWhatOneRatingRuleHidesintheCatalog/Netflixcatalogquality) in a browser. To open it offline, load `dashboard/tableau/netflix_dashboard.twbx` in Tableau Desktop or Tableau Public; the data is packaged inside the file.
 
 ## Rebuild
 
@@ -88,12 +69,12 @@ Needs Python 3.13 and PostgreSQL 14+. Run from the repo root in PowerShell.
 2. Create the database `netflix_gap`, copy `.env.example` to `.env`, and add your password.
 3. Download `netflix_titles.csv` from [Kaggle](https://www.kaggle.com/datasets/shivamb/netflix-shows) and `title.basics.tsv` and `title.ratings.tsv` from [IMDb](https://datasets.imdbws.com/) into `data/raw/` (not committed).
 4. Run `notebooks/02_clean.ipynb`, then `scripts/01_filter_imdb.py` to `scripts/05_export_xlsx.py` in order. This writes the summary tables to `dashboard/data/`.
-5. Open `excel/netflix_gap_marts_plain.xlsx`.
+5. Generate the dashboard with `dashboard/tableau/build_tableau.py` (usage at the top of the script). It reads `netflix_gap_marts_plain.xlsx`, which step 4 does not yet produce.
 
 ## Tools
 
 - Python and PostgreSQL (SQL) for cleaning, matching and building the summary tables
-- Excel for Microsoft 365 for the dashboard
+- Tableau for the dashboard, published on Tableau Public
 
 ## Sources
 
