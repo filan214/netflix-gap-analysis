@@ -1,8 +1,10 @@
 # Netflix Catalog vs IMDb Ratings
 
-Where does Netflix's catalog deliver titles audiences rate highly, where is it thin compared with the world, and how does Indonesian content compare? I matched Netflix's 2021 catalog to IMDb (Internet Movie Database) ratings and built a Tableau dashboard to answer these questions.
+Interactive dashboard: [View on Tableau Public](https://public.tableau.com/app/profile/valentinus.gunawan/viz/NetflixsHiddenGemsWhatOneRatingRuleHidesintheCatalog/Netflixcatalogquality)
 
-**[View the interactive dashboard on Tableau Public](https://public.tableau.com/app/profile/valentinus.gunawan/viz/NetflixsHiddenGemsWhatOneRatingRuleHidesintheCatalog/Netflixcatalogquality)**
+[![Tableau dashboard: what one rating rule hides in Netflix's catalog](docs/images/tableau_dashboard.png)](https://public.tableau.com/app/profile/valentinus.gunawan/viz/NetflixsHiddenGemsWhatOneRatingRuleHidesintheCatalog/Netflixcatalogquality)
+
+Where does Netflix's catalog deliver titles audiences rate highly, where is it thin compared with the world, and how does Indonesian content compare? I matched Netflix's 2021 catalog to IMDb (Internet Movie Database) ratings and built a Tableau dashboard to answer these questions.
 
 ## Situation
 
@@ -20,26 +22,36 @@ Answer three business questions:
 
 - **Matched titles to IMDb** on normalized title, type and year, in two passes: exact year first (for series, the year must fall inside the show's run), then year off by one. Result: 7,492 of 8,807 titles matched (85.1%).
 - **Audited match precision** on a sample of 60 matches, with AI (artificial intelligence) labelling and 12 rows checked by hand: exact-year matches 100.0% correct (30 of 30), year-off-by-one matches 96.7% (29 of 30).
-- **Defined "highly rated"** as IMDb 7.0 or higher with at least 1,000 votes: 2,142 titles, 28.6% of matched titles. **Quality Score** = a group's share of highly rated titles divided by the whole catalog's share, so 1.0 is the catalog average. Groups with fewer than 30 matched titles are not ranked.
-- **Tested the genre ranking** under 4 scenarios: Standard (7.0 rating, 1,000 votes), Lenient (6.5, 500), Strict (7.5, 5,000), and Standard with uncertain matches removed.
+- **Defined a "good" title** as IMDb 7.0 or higher with at least 1,000 votes. **Quality Score** = a group's share of good titles divided by the whole catalog's share, so 1.0 is the catalog average. Groups with fewer than 30 matched titles are not ranked.
+- **Tested the genre ranking** under 4 rating rules: Standard (7.0 rating, 1,000 votes), Lenient (6.5, 500), Strict (7.5, 5,000), and Standard with uncertain matches removed.
 - **Built 7 summary tables** with SQL (Structured Query Language) in PostgreSQL, run from Python.
-- **Built a one-page Tableau dashboard** with six views: a world map of well-rated titles hidden by low vote counts, genre rank stability across the 4 scenarios, the Netflix-versus-world gap by genre (with a Movie / TV (television) Series filter), Indonesian genres next to the whole catalog, and titles added by year for Netflix and for Indonesia. A Python script generates the workbook.
+- **Built a one-page Tableau dashboard** from those tables. A Python script generates the workbook.
 
 ## Result
 
-- **15 genres are small but rated well above average.** These scale-up candidates score at least 1.1 (10% above the catalog average) but each hold less than the typical 3.0% share of the catalog.
-- **Netflix is thinnest on War and Thriller movies.** For movies, the biggest gaps against the world are War (1.50) and Thriller (1.31). A Gap Score above 1 means the genre makes up a smaller share of Netflix's highly rated movies than of the world's (IMDb titles from 2000 on).
-- **The top of the genre ranking is unstable, the bottom is not.** The top 5 changes under every alternative scenario, while four of the bottom five stay in the bottom five under all four. So the project makes no "top 5 genres" claim.
-- **Low vote counts hide well-rated titles in some countries.** In Taiwan, 48.1% of matched titles are rated 7 or higher on IMDb but have fewer than 1,000 votes, so they do not count as highly rated.
-- **Indonesian titles lean Teen/Family and arrived mostly in 2018-2020.** 79 of 90 Indonesian titles matched. 64.6% are rated Teen/Family, against 42.8% across Netflix, and 74 of the 90 were added in 2018-2020. Descriptive only: Indonesia gets no scores or ranks.
+- **Scale:** 8,807 Netflix titles, 7,492 matched to IMDb ratings, 2,142 rated "good" (IMDb 7.0+ with at least 1,000 votes).
+- **Visibility penalty:** in some countries, many titles rated 7.0+ have fewer than 1,000 votes, so they never count as good. This share is highest in Taiwan (48.1%), then Singapore (23.5%) and Denmark (19.1%), against a catalog average of 9.4%. Indonesia is at 7.6%.
+- **Rank instability:** change the rating rule and the top genres change. Only Classic Movies and Anime Series stay in the top 5 under all four rules, so the project reports this instability instead of a "top 5 genres" list.
+- **Netflix vs the world:** War is the movie genre where Netflix is thinnest, with a Gap Score of 1.50. A Gap Score above 1 means the genre makes up a smaller share of Netflix's good movies than of the world's (IMDb titles from 2000 on).
+- **Indonesia:** 90 titles, 79 of them matched. Shown as counts and percentages only, because there are too few titles to score or rank.
+- **Known limit:** titles with no country listed match only 55.2% of the time, so "Unknown" is shown but not ranked.
 
-## Data limits
+## Dashboard
 
-- Titles with no country listed match only 55.2% of the time, against 76.9%-97.6% for named countries, so "Unknown" is shown but not ranked.
-- Titles added in 2011-2014 match worse (66.7%-75.0%) than those added from 2015 on (81.1%-88.3%). Only 51 titles were added in 2011-2014.
+- **Map:** share of good-quality titles hidden by low votes, by country.
+- **Indonesia vs all Netflix:** Indonesian titles next to the whole catalog, for the 10 most common Indonesian genres.
+- **Rank stability:** genre ranks across the 4 rating rules.
+- **Netflix vs world:** genres where Netflix is thinner than the world, with a Movie / TV (television) Series filter.
+- **Catalog growth:** titles by year added to Netflix. Click a year to filter the Indonesia chart.
+- **Indonesia growth:** Indonesian titles added by year.
+
+## Limitations
+
+- The catalog is a 2021 Kaggle snapshot, so everything is as of 2021.
+- Netflix titles are matched to IMDb by title, type and year only. 14.9% of titles are unmatched, and titles with no country listed match at only 55.2%, against 76.9%-97.6% for named countries.
+- The "good" threshold (7.0 rating, 1,000 votes) is a choice. Other thresholds change the top genre ranks, and the vote minimum hides well-rated titles from countries with fewer IMDb voters.
+- Indonesia has only 90 titles, too few to score or rank.
 - IMDb votes measure popularity, not Netflix viewership.
-- Netflix's genre labels and IMDb's genre labels are never compared directly. The gap against the world uses IMDb genres on both sides.
-- Everything is as of the 2021 catalog.
 
 ## Repo structure
 
@@ -48,10 +60,11 @@ dashboard/tableau/  netflix_dashboard.twbx (the dashboard), build_tableau.py
                     (generates it), netflix_map.twbx (map template it reads)
 dashboard/data/     the 7 summary tables as CSV (comma-separated values) files,
                     netflix_gap_marts.xlsx and netflix_gap_marts_plain.xlsx
+docs/               match report, audit sample, data profiles,
+                    images/tableau_dashboard.png
 notebooks/          profiling and cleaning of the Netflix data
 scripts/            Python pipeline, run in order 01 to 05
 sql/                schema, matching and summary-table queries
-docs/               match report and audit sample
 tests/              tests for title normalization
 ```
 
@@ -68,13 +81,19 @@ Needs Python 3.13 and PostgreSQL 14+. Run from the repo root in PowerShell.
 1. Install: `python -m venv .venv; .venv\Scripts\Activate.ps1; pip install -r requirements.txt`
 2. Create the database `netflix_gap`, copy `.env.example` to `.env`, and add your password.
 3. Download `netflix_titles.csv` from [Kaggle](https://www.kaggle.com/datasets/shivamb/netflix-shows) and `title.basics.tsv` and `title.ratings.tsv` from [IMDb](https://datasets.imdbws.com/) into `data/raw/` (not committed).
-4. Run `notebooks/02_clean.ipynb`, then `scripts/01_filter_imdb.py` to `scripts/05_export_xlsx.py` in order. This writes the summary tables to `dashboard/data/`.
-5. Generate the dashboard with `dashboard/tableau/build_tableau.py` (usage at the top of the script). It reads `netflix_gap_marts_plain.xlsx`, which step 4 does not yet produce.
+4. Run `notebooks/02_clean.ipynb`, then `scripts/01_filter_imdb.py` to `scripts/05_export_xlsx.py` in order. This writes the summary tables to `dashboard/data/`. It does not yet write `netflix_gap_marts_plain.xlsx`.
+
+### Rebuild the Tableau workbook
+
+```powershell
+python dashboard/tableau/build_tableau.py dashboard/data/netflix_gap_marts_plain.xlsx dashboard/tableau/netflix_map.twbx dashboard/tableau/netflix_dashboard.twbx
+```
+
+The generated file uses live CSV connections. Before publishing to Tableau Public, open it in Tableau, run Data → (each source) → Extract Data, then save.
 
 ## Tools
 
-- Python and PostgreSQL (SQL) for cleaning, matching and building the summary tables
-- Tableau for the dashboard, published on Tableau Public
+Python (pandas), PostgreSQL, SQL, Tableau.
 
 ## Sources
 
