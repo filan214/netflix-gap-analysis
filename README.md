@@ -38,12 +38,29 @@ Answer three business questions:
 
 ## Dashboard
 
-- **Map:** share of good-quality titles hidden by low votes, by country.
-- **Indonesia vs all Netflix:** Indonesian titles next to the whole catalog, for the 10 most common Indonesian genres.
-- **Rank stability:** genre ranks across the 4 rating rules.
-- **Netflix vs world:** genres where Netflix is thinner than the world, with a Movie / TV (television) Series filter.
-- **Catalog growth:** titles by year added to Netflix. Click a year to filter the Indonesia chart.
-- **Indonesia growth:** Indonesian titles added by year.
+One page with six charts. [Open it on Tableau Public](https://public.tableau.com/app/profile/valentinus.gunawan/viz/NetflixsHiddenGemsWhatOneRatingRuleHidesintheCatalog/Netflixcatalogquality) to hover, filter and click through.
+
+### Good titles that too few people rated
+
+![World map shaded by the share of each country's titles rated 7+ with under 1,000 votes](docs/images/tableau_map_hidden_by_votes.png)
+*Share of good-quality titles hidden by low votes, by country. Taiwan is highest at 48.1%, against a 9.4% catalog average.*
+
+### Change the rule and the best genres change
+
+![Line chart of genre ranks under the Standard, Lenient, Strict and clean-matches rules](docs/images/tableau_rank_stability.png)
+*Genre ranks across the 4 rating rules. Only Classic Movies and Anime Series (red) stay in the top 5 under all four.*
+
+### Genres where Netflix is thinner than the world
+
+![Bar chart of Gap Score by movie genre, with War highest at 1.50](docs/images/tableau_netflix_vs_world.png)
+*Gap Score by genre, with a Movie / TV (television) Series filter. For movies, War is highest at 1.50.*
+
+### Indonesian titles next to the whole catalog
+
+![Paired bars comparing Indonesian titles with all Netflix titles for the 10 most common Indonesian genres](docs/images/tableau_indonesia_vs_all.png)
+*The 10 most common genres among the 79 matched Indonesian titles, next to all 7,492 matched Netflix titles.*
+
+The page also has two growth charts: **Catalog growth** (titles by year added to Netflix; click a year to filter the Indonesia chart) and **Indonesia growth** (Indonesian titles added by year).
 
 ## Limitations
 
@@ -61,7 +78,7 @@ dashboard/tableau/  netflix_dashboard.twbx (the dashboard), build_tableau.py
 dashboard/data/     the 7 summary tables as CSV (comma-separated values) files,
                     netflix_gap_marts.xlsx and netflix_gap_marts_plain.xlsx
 docs/               match report, audit sample, data profiles,
-                    images/tableau_dashboard.png
+                    images/ (dashboard screenshots used in this README)
 notebooks/          profiling and cleaning of the Netflix data
 scripts/            Python pipeline, run in order 01 to 05
 sql/                schema, matching and summary-table queries
